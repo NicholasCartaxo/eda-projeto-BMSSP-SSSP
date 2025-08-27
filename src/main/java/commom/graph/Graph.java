@@ -1,4 +1,4 @@
-package main.java.dataStructures;
+package main.java.commom.graph;
 
 import java.util.Map;
 
