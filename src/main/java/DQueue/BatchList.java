@@ -1,8 +1,10 @@
 package main.java.DQueue;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 
+import main.java.DQueue.util.EntryNodeIntComparator;
+import main.java.DQueue.util.IntroSelect;
 import main.java.commom.graph.Node;
 
 class BatchList {
@@ -51,13 +53,14 @@ class BatchList {
             return;
         }
 
-        int median = IntroSelect.select(elements, elements.size()/2);
+        Entry<Node,Integer> median = IntroSelect.select(elements, elements.size()/2);
 
         LinkedHashMap<Node,Integer> left = new LinkedHashMap<Node,Integer>();
         LinkedHashMap<Node,Integer> right = new LinkedHashMap<Node,Integer>();
 
-        for(Map.Entry<Node,Integer> entry : elements.entrySet()){
-            if(entry.getValue() <= median){
+        EntryNodeIntComparator comparator = new EntryNodeIntComparator(); 
+        for(Entry<Node,Integer> entry : elements.entrySet()){
+            if(comparator.compare(entry, median) <= 0){
                 left.put(entry.getKey(),entry.getValue());
             }else{
                 right.put(entry.getKey(),entry.getValue());
