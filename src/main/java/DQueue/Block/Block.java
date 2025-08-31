@@ -23,7 +23,7 @@ public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
     }
 
     public boolean isFull(){
-        return size() == blockSize;
+        return size() > blockSize;
     }
 
     public void addFirst(NodeDistStored value){
@@ -34,6 +34,7 @@ public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
             head = n;
         }else{
             n.next = head;
+            head.prev = n;
             head = n;
         }
         size++;
@@ -56,7 +57,6 @@ public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
         BlockNode aux = head;
         while(aux != null){
             if(aux.value.compareTo(median) <= 0){
-                size--;
                 newBlock.addFirst(aux.value);
                 newUpperBound = Math.max(newUpperBound,aux.value.dist);
                 remove(aux);

@@ -70,7 +70,7 @@ class BatchList implements BlockCollection {
             return;
         }
 
-        NodeDistStored median = IntroSelect.select(elements, elements.size()/2);
+        NodeDistStored median = IntroSelect.select(elements, (elements.size()-1)/2);
 
         HashSet<NodeDistStored> left = new HashSet<NodeDistStored>();
         HashSet<NodeDistStored> right = new HashSet<NodeDistStored>();

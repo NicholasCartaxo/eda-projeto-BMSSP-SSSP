@@ -14,7 +14,7 @@ public class BlockIterator implements Iterator<NodeDistStored> {
 
     @Override
     public boolean hasNext() {
-        return curr.next != null;
+        return curr != null;
     }
 
     @Override

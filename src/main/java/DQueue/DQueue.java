@@ -51,17 +51,27 @@ public class DQueue {
 
     public HashSet<Node> pull(){
         HashSet<NodeDistStored> possibleSmallests = new HashSet<NodeDistStored>();
+        
         possibleSmallests.addAll(batchList.pull());
         possibleSmallests.addAll(insertTree.pull());
-
-        NodeDistStored blockSizeSmallest = IntroSelect.select(possibleSmallests, blockSize-1);
+        
         HashSet<Node> ret = new HashSet<Node>();
-        for(NodeDistStored element : possibleSmallests){
-            if(element.compareTo(blockSizeSmallest) <= 0){
+
+        if(possibleSmallests.size() <= blockSize){
+            for(NodeDistStored element : possibleSmallests){
                 ret.add(element.node);
                 delete(element);
             }
+        }else{
+            NodeDistStored blockSizeSmallest = IntroSelect.select(possibleSmallests, blockSize-1);
+            for(NodeDistStored element : possibleSmallests){
+                if(element.compareTo(blockSizeSmallest) <= 0){
+                    ret.add(element.node);
+                    delete(element);
+                }
+            }
         }
+
         return ret;
     }
 
@@ -83,6 +93,8 @@ public class DQueue {
     }
 
     private void delete(NodeDistStored element){
+        coordinates.remove(element.node);
+
         element.blockContainer.delete(element.blockNode);
         if(element.blockContainer.isEmpty()){
             element.blockCollection.delete(element.blockContainer);

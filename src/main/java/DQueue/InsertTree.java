@@ -29,7 +29,7 @@ class InsertTree implements BlockCollection{
                 node = node.right;
                 continue;
             }
-            if(node.left != null && element.dist <= node.left.value.upperBound){
+            if(node.left.value != null && element.dist <= node.left.value.upperBound){
                 node = node.left;
             }else{
                 node.value.addFirst(element);
@@ -70,30 +70,30 @@ class InsertTree implements BlockCollection{
     }
 
     private InsertNode insertBlock(Block element) {
+        InsertNode newNode;
         if (root == null) {
             root = createNode(element, null, null, null);
-            size++;
-            return root;
-        }
-
-        InsertNode insertParentNode = null;
-        InsertNode searchTempNode = root;
-        while (searchTempNode != null && searchTempNode.value != null) {
-            insertParentNode = searchTempNode;
-            if (element.compareTo(searchTempNode.value) < 0) {
-                searchTempNode = searchTempNode.left;
-            } else {
-                searchTempNode = searchTempNode.right;
+            newNode = root;
+        }else{
+            InsertNode insertParentNode = null;
+            InsertNode searchTempNode = root;
+            while (searchTempNode != null && searchTempNode.value != null) {
+                insertParentNode = searchTempNode;
+                if (element.compareTo(searchTempNode.value) < 0) {
+                    searchTempNode = searchTempNode.left;
+                } else {
+                    searchTempNode = searchTempNode.right;
+                }
             }
-        }
 
-        InsertNode newNode = createNode(element, insertParentNode, null, null);
-        if (insertParentNode.value.compareTo(newNode.value) > 0) {
-            insertParentNode.left = newNode;
-        } else {
-            insertParentNode.right = newNode;
-        }
+            newNode = createNode(element, insertParentNode, null, null);
+            if (insertParentNode.value.compareTo(newNode.value) > 0) {
+                insertParentNode.left = newNode;
+            } else {
+                insertParentNode.right = newNode;
+            }
 
+        }
         newNode.left = nilNode;
         newNode.right = nilNode;
         root.parent = nilNode;
@@ -144,7 +144,7 @@ class InsertTree implements BlockCollection{
         for(NodeDistStored element : value){
             element.blockContainer = newNode;
         }
-        return new InsertNode(value, parent, left, right, ColorEnum.RED);
+        return newNode;
     }
     
     private InsertNode getMinimum(InsertNode node) {

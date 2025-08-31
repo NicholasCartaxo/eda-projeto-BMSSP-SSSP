@@ -3,7 +3,7 @@ package main.java.DQueue.Block;
 import main.java.DQueue.NodeDistStored;
 
 public class BlockNode{
-    BlockNode next,prev;
+    public BlockNode next,prev;
     public final NodeDistStored value;
 
     public BlockNode(NodeDistStored value){

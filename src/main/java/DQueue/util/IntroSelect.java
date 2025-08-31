@@ -12,16 +12,11 @@ public class IntroSelect {
     
         LinkedList<ArrayList<NodeDistStored>> groups = new LinkedList<ArrayList<NodeDistStored>>();
 
-        int groupIdx = 0;
-        int insideGroupIdx = 0;
         for(NodeDistStored element : elements){
-            if(groups.get(groupIdx) == null){
-                groups.set(groupIdx, new ArrayList<NodeDistStored>());
+            if(groups.isEmpty() || groups.getLast().size() == 5){
+                groups.addLast(new ArrayList<NodeDistStored>());
             }
-            groups.get(groupIdx).add(element);
-
-            groupIdx++;
-            insideGroupIdx = (insideGroupIdx+1)%5;
+            groups.getLast().addLast(element);
         }
 
         LinkedList<NodeDistStored> medians = new LinkedList<NodeDistStored>();
@@ -31,7 +26,12 @@ public class IntroSelect {
             medians.add(group.get(medianIndex));
         }
 
-        NodeDistStored medianOfMedians = select(medians,(medians.size()-1)/2);
+        NodeDistStored medianOfMedians;
+        if(medians.size() == 1){
+            medianOfMedians = medians.getFirst();
+        }else{
+            medianOfMedians = select(medians,(medians.size()-1)/2);
+        }
 
         LinkedList<NodeDistStored> left = new LinkedList<NodeDistStored>();
         LinkedList<NodeDistStored> right = new LinkedList<NodeDistStored>();
