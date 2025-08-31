@@ -1,22 +1,22 @@
 package main.java.DQueue;
 
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-
-import main.java.DQueue.util.EntryNodeIntComparator;
+import java.util.HashSet;
+import main.java.DQueue.Block.Block;
+import main.java.DQueue.Block.BlockCollection;
+import main.java.DQueue.Block.BlockContainer;
+import main.java.DQueue.Block.BlockNode;
 import main.java.DQueue.util.IntroSelect;
-import main.java.commom.graph.Node;
 
-class BatchList {
+class BatchList implements BlockCollection {
 
     private final int blockSize;
-    private BlockNode head;
+    private BatchNode head;
 
     public BatchList(int blockSize){
         this.blockSize = blockSize;
     }
 
-    public void batchPrepend(LinkedHashMap<Node,Integer> elements){
+    public void batchPrepend(HashSet<NodeDistStored> elements){
         if(elements.size() < blockSize){
             addFirst(elements);
         }
@@ -25,19 +25,36 @@ class BatchList {
         }
     }
 
-    public LinkedHashMap<Node,Integer> pull(){
-        LinkedHashMap<Node,Integer> ret = new LinkedHashMap<Node,Integer>();
+    public HashSet<NodeDistStored> pull(){
+        HashSet<NodeDistStored> ret = new HashSet<NodeDistStored>();
 
-        BlockNode aux = head;
+        BatchNode aux = head;
         while(aux != null && ret.size() < blockSize){
-            ret.putAll(aux.value);
+            for(NodeDistStored element : aux.value){
+                ret.add(element);
+            }
             aux = aux.next;
         }
         return ret;
     }
+    
+    @Override
+    public void delete(BlockContainer blockContainer) {
+        BatchNode node = (BatchNode)blockContainer;
+        if(head == node) head = head.next;
 
-    private void addFirst(LinkedHashMap<Node,Integer> elements) {
-        BlockNode n = new BlockNode(elements);
+        if(node.prev != null) node.prev.next = node.next;
+        if(node.next != null) node.next.prev = node.prev;
+    }
+
+    private void addFirst(HashSet<NodeDistStored> elements) {
+        BatchNode n = new BatchNode(new Block(blockSize, 0));
+        
+        for(NodeDistStored element : elements){
+            element.blockContainer = n;
+            n.value.addFirst(element);
+        }
+
         if(head == null){
             head = n;
         }else{
@@ -47,23 +64,22 @@ class BatchList {
         }
     }
 
-    private void addPartitioned(LinkedHashMap<Node,Integer> elements){
+    private void addPartitioned(HashSet<NodeDistStored> elements){
         if(elements.size() <= (blockSize+1)/2){
             addFirst(elements);
             return;
         }
 
-        Entry<Node,Integer> median = IntroSelect.select(elements, elements.size()/2);
+        NodeDistStored median = IntroSelect.select(elements, elements.size()/2);
 
-        LinkedHashMap<Node,Integer> left = new LinkedHashMap<Node,Integer>();
-        LinkedHashMap<Node,Integer> right = new LinkedHashMap<Node,Integer>();
+        HashSet<NodeDistStored> left = new HashSet<NodeDistStored>();
+        HashSet<NodeDistStored> right = new HashSet<NodeDistStored>();
 
-        EntryNodeIntComparator comparator = new EntryNodeIntComparator(); 
-        for(Entry<Node,Integer> entry : elements.entrySet()){
-            if(comparator.compare(entry, median) <= 0){
-                left.put(entry.getKey(),entry.getValue());
+        for(NodeDistStored element : elements){
+            if(element.compareTo(median) <= 0){
+                left.add(element);
             }else{
-                right.put(entry.getKey(),entry.getValue());
+                right.add(element);
             }
         }
 
@@ -71,24 +87,26 @@ class BatchList {
         addPartitioned(left);
     }
 
-    public void remove(BlockNode node) {
-        if(head == node) head = head.next;
-
-        if(node.prev != null) node.prev.next = node.next;
-        if(node.next != null) node.next.prev = node.prev;
-    }
-
-
 }
 
-class BlockNode {
+class BatchNode implements BlockContainer {
 
-    LinkedHashMap<Node,Integer> value;
-    BlockNode prev;
-    BlockNode next;
+    Block value;
+    BatchNode prev;
+    BatchNode next;
 
-    BlockNode(LinkedHashMap<Node,Integer> v) {
-        this.value = v;
+    BatchNode(Block value) {
+        this.value = value;
+    }
+
+    @Override
+    public void delete(BlockNode element) {
+        value.remove(element);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return value.isEmpty();
     }
 
 }

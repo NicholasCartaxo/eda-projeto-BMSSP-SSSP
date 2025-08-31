@@ -22,4 +22,23 @@ public class Node implements Comparable<Node> {
         return Integer.valueOf(id).compareTo(Integer.valueOf(n2.id));
     }
 
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Node other = (Node) obj;
+        if (id != other.id)
+            return false;
+        return true;
+    }
+
 }

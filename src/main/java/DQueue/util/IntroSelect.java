@@ -1,39 +1,51 @@
 package main.java.DQueue.util;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
+import java.util.LinkedList;
 
-import main.java.commom.graph.Node;
+import main.java.DQueue.NodeDistStored;
+
 
 public class IntroSelect {
 
-    public static Entry<Node,Integer> select(LinkedHashMap<Node,Integer> elements, int index){
+    public static NodeDistStored select(Iterable<NodeDistStored> elements, int index){
     
-        ArrayList<ArrayList<Entry<Node,Integer>>> groups = new ArrayList<ArrayList<Entry<Node,Integer>>>();
+        LinkedList<ArrayList<NodeDistStored>> groups = new LinkedList<ArrayList<NodeDistStored>>();
 
         int groupIdx = 0;
         int insideGroupIdx = 0;
-        for(Entry<Node,Integer> entry : elements.entrySet()){
+        for(NodeDistStored element : elements){
             if(groups.get(groupIdx) == null){
-                groups.set(groupIdx, new ArrayList<Entry<Node,Integer>>());
+                groups.set(groupIdx, new ArrayList<NodeDistStored>());
             }
-            groups.get(groupIdx).add(entry);
+            groups.get(groupIdx).add(element);
 
             groupIdx++;
             insideGroupIdx = (insideGroupIdx+1)%5;
         }
 
-        ArrayList<Entry<Node,Integer>> medians = new ArrayList<Entry<Node,Integer>>();
-        for(ArrayList<Entry<Node,Integer>> group : groups){
-            group.sort(new EntryNodeIntComparator());
+        LinkedList<NodeDistStored> medians = new LinkedList<NodeDistStored>();
+        for(ArrayList<NodeDistStored> group : groups){
+            group.sort(null);
             int medianIndex = ((group.size()-1)/2);
             medians.add(group.get(medianIndex));
         }
 
-        
+        NodeDistStored medianOfMedians = select(medians,(medians.size()-1)/2);
 
-        return null;
+        LinkedList<NodeDistStored> left = new LinkedList<NodeDistStored>();
+        LinkedList<NodeDistStored> right = new LinkedList<NodeDistStored>();
+        for(NodeDistStored element : elements){
+            if(element.compareTo(medianOfMedians) <= 0) left.add(element);
+            else right.add(element);
+        }
+
+        int medianOfMediansIndex = left.size()-1;
+        if(index == medianOfMediansIndex) return medianOfMedians;
+        left.remove(medianOfMedians);
+        if(index < medianOfMediansIndex) return select(left,index);
+        return select(right, index-medianOfMediansIndex-1);
+
     }
 
 }
