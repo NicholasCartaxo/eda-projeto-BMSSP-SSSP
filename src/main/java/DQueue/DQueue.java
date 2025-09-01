@@ -38,10 +38,8 @@ public class DQueue {
 
         for(NodeDist element : elements){
             NodeDistStored elementToAdd = elementToAdd(element);
-            elementToAdd.blockCollection = batchList;
-
-
             if(elementToAdd != null){
+                elementToAdd.blockCollection = batchList;
                 elementsToAdd.add(elementToAdd);
             }
         }
