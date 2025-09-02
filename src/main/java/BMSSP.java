@@ -6,124 +6,114 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import main.java.commom.SetTuple;
+import main.java.commom.SetMapTuple;
 import main.java.commom.graph.Edge;
+import main.java.commom.graph.Node;
 
 public class BMSSP {
-    private int n;
-    private Map<Integer, List<Edge>> graph;
-    private int[] dHat;
+    private int k;
+    private Map<Node, Integer> shortestDistance;
 
     public BMSSP(){
-        graph = new HashMap<Integer, List<Edge>>();
-        n = graph.size();
-        dHat = new int[n];
-    }
 
-    public static class Result {
-        public Set<Integer> P;
-        public Set<Integer> W;
-        
-        public Result(Set<Integer> P, Set<Integer> W) {
-            this.P = P;
-            this.W = W;
-        }
     }
     
-    public Result findPivots(int B, Set<Integer> S) {
-        Set<Integer> W = new HashSet<>(S);
-        Set<Integer> W_prev = new HashSet<>(S);
-        
-        int k = computeK();
+    public SetTuple findPivots(int upperBound, Set<Node> border) {
+        Set<Node> nodes = new HashSet<>(border);
+        Set<Node> prevNodes = new HashSet<>(border);
 
         for(int i = 0; i < k; i++){
-            Set<Integer> W_i = new HashSet<>();
+            Set<Node> currentNodes = new HashSet<>();
 
-            for (int u : W_prev) {
-                List<Edge> edges = graph.get(u);
-                if (edges == null) continue;
+            for (Node u : prevNodes) {
+                List<Edge> edges = u.outEdges;
                 
                 for (Edge edge : edges) {
-                    int v = edge.nodeTo.id;
-                    int newDistance = dHat[u] + edge.weight;
+                    Node nodeTo = edge.nodeTo;
+                    int newDistance = shortestDistance.get(edge.nodeFrom) + edge.weight;
                     
-                    if (newDistance <= dHat[v]) {
-                        dHat[v] = newDistance;
+                    if (newDistance <= shortestDistance.get(nodeTo)) {
+                        shortestDistance.put(nodeTo, newDistance);
                         
-                        if (newDistance < B) {
-                            W_i.add(v);
+                        if (newDistance < upperBound) {
+                            currentNodes.add(nodeTo);
                         }
                     }
                 }
             }
 
-            W.addAll(W_i);
-            W_prev = W_i;
+            nodes.addAll(currentNodes);
+            prevNodes = currentNodes;
 
-            if (W.size() > k * S.size()) {
-                return new Result(new HashSet<>(S), W);
+            if (nodes.size() > k * border.size()) {
+                return new SetTuple(new HashSet<>(border), nodes);
             }
         }
 
-        // Build forest F 
-        Map<Integer, Integer> parent = new HashMap<>(); 
-        Map<Integer, Set<Integer>> children = new HashMap<>();
+        SetMapTuple tupleForest = buildForest(nodes);
+        Set<Node> roots = tupleForest.roots;
+        Map<Node, Integer> treeSizes = tupleForest.treeSizes;
+
+        // Select pivots
+        Set<Node> pivots = new HashSet<>();
+        for (Node root : roots) {
+            if (border.contains(root) && treeSizes.get(root) >= k) {
+                pivots.add(root);
+            }
+        }
         
-        for (int u : W) {
-            List<Edge> edges = graph.get(u);
+        return new SetTuple(pivots, nodes);
+        
+        
+    }
+
+    private SetMapTuple buildForest(Set<Node> nodes){
+        Map<Node, Node> parent = new HashMap<>(); 
+        Map<Node, Set<Node>> children = new HashMap<>();
+        
+        for (Node node : nodes) {
+            List<Edge> edges = node.outEdges;
             if (edges == null) continue;
             
             for (Edge edge : edges) {
-                int v = edge.nodeTo.id;
-                if (W.contains(v) && dHat[v] == dHat[u] + edge.weight) {
-                    parent.put(v, u);
-                    children.computeIfAbsent(u, z -> new HashSet<>()).add(v);
+                Node nodeTo = edge.nodeTo;
+                if (nodes.contains(nodeTo) && shortestDistance.get(nodeTo) == shortestDistance.get(node) + edge.weight) {
+                    parent.put(nodeTo, node);
+
+                    if(!children.containsKey(node)){
+                        children.put(node, new HashSet<>());
+                    }
+
+                    Set<Node> setNodes = children.get(node);
+                    setNodes.add(nodeTo);
                 }
             }
         }
     
-        // Find roots 
-        Set<Integer> roots = new HashSet<>();
-        for (int u : W) {
-            if (!parent.containsKey(u)) {
-                roots.add(u);
+        Set<Node> roots = new HashSet<>();
+        for (Node node : nodes) {
+            if (!parent.containsKey(node)) {
+                roots.add(node);
             }
         }
-        
-        // For each root, traverse its tree to count vertices
-        Map<Integer, Integer> treeSizes = new HashMap<>();
-        for (int root : roots) {
+
+        Map<Node, Integer> treeSizes = new HashMap<>();
+        for (Node root : roots) {
             int size = countTreeSize(root, children);
             treeSizes.put(root, size);
         }
-        
-        // Select pivots
-        Set<Integer> P = new HashSet<>();
-        for (int root : roots) {
-            if (S.contains(root) && treeSizes.get(root) >= k) {
-                P.add(root);
-            }
-        }
-        
-        return new Result(P, W);
-        
-        
+
+        return new SetMapTuple(roots, treeSizes);
     }
 
-    private int countTreeSize(int node, Map<Integer, Set<Integer>> children) {
-        int count = 1; // count this node
+    private int countTreeSize(Node node, Map<Node, Set<Node>> children) {
+        int count = 1;
         if (children.containsKey(node)) {
-            for (int child : children.get(node)) {
+            for (Node child : children.get(node)) {
                 count += countTreeSize(child, children);
             }
         }
         return count;
-    }
-        
-    private int computeK() {
-        // k = log^c(n) for some const c
-        // Example: c = 2 → k = (log n)²
-        double logN = Math.log(n) / Math.log(2); // log2(n)
-        int k = (int) Math.pow(logN, 2); // k = (log n)²
-        return Math.max(k, 1); 
     }
 }

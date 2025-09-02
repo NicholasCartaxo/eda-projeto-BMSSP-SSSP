@@ -13,10 +13,6 @@ public class Graph {
         this.numEdges = numEdges;
     }
 
-    public Graph(){
-        this(0,0);
-    }
-
     public void addNode(int id){
         nodesById.put(id, new Node(id));
     }
