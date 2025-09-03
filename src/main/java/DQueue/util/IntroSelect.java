@@ -16,7 +16,7 @@ public class IntroSelect {
             if(groups.isEmpty() || groups.getLast().size() == 5){
                 groups.addLast(new ArrayList<NodeDistStored>());
             }
-            groups.getLast().addLast(element);
+            groups.getLast().add(element);
         }
 
         LinkedList<NodeDistStored> medians = new LinkedList<NodeDistStored>();
