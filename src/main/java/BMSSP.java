@@ -6,35 +6,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import main.java.commom.SetTuple;
+import main.java.commom.dataStructures.Pair;
 import main.java.commom.SetMapTuple;
 import main.java.commom.graph.Edge;
 import main.java.commom.graph.Node;
 
 public class BMSSP {
     private int k;
-    private Map<Node, Integer> shortestDistance;
+    private Map<Node, Integer> dists;
 
     public BMSSP(){
 
     }
     
-    public SetTuple findPivots(int upperBound, Set<Node> border) {
-        Set<Node> nodes = new HashSet<>(border);
-        Set<Node> prevNodes = new HashSet<>(border);
+    public Pair<HashSet<Node>,HashSet<Node>> findPivots(int upperBound, HashSet<Node> border) {
+        HashSet<Node> completeNodes = new HashSet<Node>(border);
+        HashSet<Node> prevNodes = new HashSet<Node>(border);
 
         for(int i = 0; i < k; i++){
-            Set<Node> currentNodes = new HashSet<>();
+            HashSet<Node> currentNodes = new HashSet<>();
 
-            for (Node u : prevNodes) {
-                List<Edge> edges = u.outEdges;
-                
-                for (Edge edge : edges) {
+            for (Node node : prevNodes) {
+                for (Edge edge : node.outEdges) {
                     Node nodeTo = edge.nodeTo;
-                    int newDistance = shortestDistance.get(edge.nodeFrom) + edge.weight;
+                    int newDistance = dists.get(edge.nodeFrom) + edge.weight;
                     
-                    if (newDistance <= shortestDistance.get(nodeTo)) {
-                        shortestDistance.put(nodeTo, newDistance);
+                    if (newDistance <= dists.get(nodeTo)) {
+                        dists.put(nodeTo, newDistance);
                         
                         if (newDistance < upperBound) {
                             currentNodes.add(nodeTo);
@@ -43,27 +41,27 @@ public class BMSSP {
                 }
             }
 
-            nodes.addAll(currentNodes);
+            completeNodes.addAll(currentNodes);
             prevNodes = currentNodes;
 
-            if (nodes.size() > k * border.size()) {
-                return new SetTuple(new HashSet<>(border), nodes);
+            if (completeNodes.size() > k * border.size()) {
+                return new Pair<HashSet<Node>,HashSet<Node>>(new HashSet<Node>(border), completeNodes);
             }
         }
 
-        SetMapTuple tupleForest = buildForest(nodes);
+        SetMapTuple tupleForest = buildForest(completeNodes);
         Set<Node> roots = tupleForest.roots;
         Map<Node, Integer> treeSizes = tupleForest.treeSizes;
 
         // Select pivots
-        Set<Node> pivots = new HashSet<>();
+        HashSet<Node> pivots = new HashSet<>();
         for (Node root : roots) {
             if (border.contains(root) && treeSizes.get(root) >= k) {
                 pivots.add(root);
             }
         }
         
-        return new SetTuple(pivots, nodes);
+        return new Pair<HashSet<Node>,HashSet<Node>>(pivots, completeNodes);
         
         
     }
@@ -78,7 +76,7 @@ public class BMSSP {
             
             for (Edge edge : edges) {
                 Node nodeTo = edge.nodeTo;
-                if (nodes.contains(nodeTo) && shortestDistance.get(nodeTo) == shortestDistance.get(node) + edge.weight) {
+                if (nodes.contains(nodeTo) && dists.get(nodeTo) == dists.get(node) + edge.weight) {
                     parent.put(nodeTo, node);
 
                     if(!children.containsKey(node)){
