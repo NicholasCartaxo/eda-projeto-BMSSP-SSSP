@@ -47,6 +47,10 @@ class BatchList implements BlockCollection {
         if(node.next != null) node.next.prev = node.prev;
     }
 
+    public boolean isEmpty(){
+        return head == null;
+    }
+
     private void addFirst(HashSet<NodeDistStored> elements) {
         BatchNode n = new BatchNode(new Block(blockSize, 0));
         

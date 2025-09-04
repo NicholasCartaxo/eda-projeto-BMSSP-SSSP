@@ -57,6 +57,10 @@ class InsertTree implements BlockCollection{
         return ret;
     }
 
+    public boolean isEmpty(){
+        return size == 0;
+    }
+
     private void getBlockSizeSmallest(InsertNode entry, HashSet<NodeDistStored> ret) {
         if (entry != null && ret.size() < blockSize) {
             getBlockSizeSmallest(entry.left, ret);
