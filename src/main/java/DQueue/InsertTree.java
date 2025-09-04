@@ -1,11 +1,11 @@
-package main.java.DQueue;
+package DQueue;
 
 import java.util.HashSet;
 
-import main.java.DQueue.Block.Block;
-import main.java.DQueue.Block.BlockCollection;
-import main.java.DQueue.Block.BlockContainer;
-import main.java.DQueue.Block.BlockNode;
+import DQueue.Block.Block;
+import DQueue.Block.BlockCollection;
+import DQueue.Block.BlockContainer;
+import DQueue.Block.BlockNode;
 
 class InsertTree implements BlockCollection{
 

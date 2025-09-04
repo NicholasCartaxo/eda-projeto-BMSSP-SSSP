@@ -1,8 +1,8 @@
-package main.java.DQueue.Block;
+package DQueue.Block;
 
 import java.util.Iterator;
 
-import main.java.DQueue.NodeDistStored;
+import DQueue.NodeDistStored;
 
 public class BlockIterator implements Iterator<NodeDistStored> {
 

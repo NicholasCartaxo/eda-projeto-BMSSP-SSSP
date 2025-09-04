@@ -1,4 +1,4 @@
-package main.java.DQueue.Block;
+package DQueue.Block;
 
 public interface BlockCollection {
 

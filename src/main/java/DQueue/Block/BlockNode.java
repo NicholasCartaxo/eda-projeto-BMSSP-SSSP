@@ -1,6 +1,6 @@
-package main.java.DQueue.Block;
+package DQueue.Block;
 
-import main.java.DQueue.NodeDistStored;
+import DQueue.NodeDistStored;
 
 public class BlockNode{
     public BlockNode next,prev;

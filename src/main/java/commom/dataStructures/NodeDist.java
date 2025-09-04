@@ -1,6 +1,6 @@
-package main.java.commom.dataStructures;
+package commom.dataStructures;
 
-import main.java.commom.graph.Node;
+import commom.graph.Node;
 
 public class NodeDist implements Comparable<NodeDist> {
     public final Node node;

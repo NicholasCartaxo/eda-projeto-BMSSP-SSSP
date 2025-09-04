@@ -1,9 +1,9 @@
-package main.java.DQueue.Block;
+package DQueue.Block;
 
 import java.util.Iterator;
 
-import main.java.DQueue.NodeDistStored;
-import main.java.DQueue.util.IntroSelect;
+import DQueue.NodeDistStored;
+import DQueue.util.IntroSelect;
 
 public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
     private final int blockSize;

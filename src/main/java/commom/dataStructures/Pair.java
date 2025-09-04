@@ -1,4 +1,4 @@
-package main.java.commom.dataStructures;
+package commom.dataStructures;
 
 public class Pair<T, U> {
     public final T first;

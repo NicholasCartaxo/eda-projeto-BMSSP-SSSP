@@ -1,10 +1,10 @@
-package main.java.DQueue;
+package DQueue;
 
-import main.java.DQueue.Block.BlockCollection;
-import main.java.DQueue.Block.BlockContainer;
-import main.java.DQueue.Block.BlockNode;
-import main.java.commom.dataStructures.NodeDist;
-import main.java.commom.graph.Node;
+import DQueue.Block.BlockCollection;
+import DQueue.Block.BlockContainer;
+import DQueue.Block.BlockNode;
+import commom.dataStructures.NodeDist;
+import commom.graph.Node;
 
 public class NodeDistStored extends NodeDist {
 

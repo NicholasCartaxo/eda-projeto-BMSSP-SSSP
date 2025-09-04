@@ -1,11 +1,11 @@
-package main.java.DQueue;
+package DQueue;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
-import main.java.DQueue.util.IntroSelect;
-import main.java.commom.dataStructures.NodeDist;
-import main.java.commom.graph.Node;
+import DQueue.util.IntroSelect;
+import commom.dataStructures.NodeDist;
+import commom.graph.Node;
 
 public class DQueue {
     
@@ -26,9 +26,9 @@ public class DQueue {
 
     public void insert(NodeDist element){
         NodeDistStored elementToAdd = elementToAdd(element);
-        elementToAdd.blockCollection = insertTree;
-
+        
         if(elementToAdd != null){
+            elementToAdd.blockCollection = insertTree;
             insertTree.insertElement(elementToAdd);
         }
     }
@@ -80,7 +80,7 @@ public class DQueue {
             return newCordinate;
         }
 
-        if(element.dist > coordinates.get(element.node).dist){
+        if(element.dist < coordinates.get(element.node).dist){
             delete(coordinates.get(element.node));
             NodeDistStored newCordinate = new NodeDistStored(element);
             coordinates.put(element.node, newCordinate);

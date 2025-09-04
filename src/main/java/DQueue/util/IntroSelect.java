@@ -1,9 +1,9 @@
-package main.java.DQueue.util;
+package DQueue.util;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import main.java.DQueue.NodeDistStored;
+import DQueue.NodeDistStored;
 
 
 public class IntroSelect {

@@ -1,4 +1,4 @@
-package main.java.commom.graph;
+package commom.graph;
 
 import java.util.Map;
 
