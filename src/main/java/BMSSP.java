@@ -2,18 +2,15 @@ package main.java;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import main.java.commom.dataStructures.Pair;
-import main.java.commom.SetMapTuple;
 import main.java.commom.graph.Edge;
+import main.java.commom.graph.Graph;
 import main.java.commom.graph.Node;
 
 public class BMSSP {
     private int k;
-    private Map<Node, Integer> dists;
+    private HashMap<Node, Integer> dists;
 
     public BMSSP(){
 
@@ -49,69 +46,58 @@ public class BMSSP {
             }
         }
 
-        SetMapTuple tupleForest = buildForest(completeNodes);
-        Set<Node> roots = tupleForest.roots;
-        Map<Node, Integer> treeSizes = tupleForest.treeSizes;
-
-        // Select pivots
-        HashSet<Node> pivots = new HashSet<>();
-        for (Node root : roots) {
-            if (border.contains(root) && treeSizes.get(root) >= k) {
-                pivots.add(root);
-            }
-        }
+    
+        Graph pivotForest = buildForest(prevNodes);
+        HashSet<Node> pivots = getPivots(pivotForest);
         
         return new Pair<HashSet<Node>,HashSet<Node>>(pivots, completeNodes);
         
         
     }
 
-    private SetMapTuple buildForest(Set<Node> nodes){
-        Map<Node, Node> parent = new HashMap<>(); 
-        Map<Node, Set<Node>> children = new HashMap<>();
-        
-        for (Node node : nodes) {
-            List<Edge> edges = node.outEdges;
-            if (edges == null) continue;
-            
-            for (Edge edge : edges) {
+    private Graph buildForest(HashSet<Node> nodes){
+        Graph forest = new Graph();
+
+        for(Node node : nodes){
+            for(Edge edge : node.outEdges){
                 Node nodeTo = edge.nodeTo;
-                if (nodes.contains(nodeTo) && dists.get(nodeTo) == dists.get(node) + edge.weight) {
-                    parent.put(nodeTo, node);
+                int weight = edge.weight;
 
-                    if(!children.containsKey(node)){
-                        children.put(node, new HashSet<>());
-                    }
-
-                    Set<Node> setNodes = children.get(node);
-                    setNodes.add(nodeTo);
+                if(dists.get(node)+weight == dists.get(nodeTo) && !forest.nodesById.containsKey(nodeTo.id)){
+                    forest.addEdge(node.id, nodeTo.id, weight);
                 }
             }
         }
-    
-        Set<Node> roots = new HashSet<>();
-        for (Node node : nodes) {
-            if (!parent.containsKey(node)) {
-                roots.add(node);
-            }
-        }
 
-        Map<Node, Integer> treeSizes = new HashMap<>();
-        for (Node root : roots) {
-            int size = countTreeSize(root, children);
-            treeSizes.put(root, size);
-        }
+        return forest;
 
-        return new SetMapTuple(roots, treeSizes);
     }
 
-    private int countTreeSize(Node node, Map<Node, Set<Node>> children) {
-        int count = 1;
-        if (children.containsKey(node)) {
-            for (Node child : children.get(node)) {
-                count += countTreeSize(child, children);
+    private HashSet<Node> getPivots(Graph forest){
+        HashSet<Node> roots = new HashSet<Node>(forest.nodesById.values());
+
+        for(Node node : forest.nodesById.values()){
+            for(Edge edge : node.outEdges){
+                roots.remove(edge.nodeTo);
             }
+        }
+
+        HashSet<Node> pivots = new HashSet<Node>();
+        for(Node root : roots){
+            if(countTreeSize(root) >= k){
+                pivots.add(root);
+            }
+        }
+        
+        return pivots;
+    }
+
+    private int countTreeSize(Node root) {
+        int count = 1;
+        for (Edge edge : root.outEdges) {
+            count += countTreeSize(edge.nodeTo);
         }
         return count;
     }
+
 }
