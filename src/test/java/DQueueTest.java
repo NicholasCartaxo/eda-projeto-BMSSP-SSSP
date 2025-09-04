@@ -59,6 +59,7 @@ class DQueueTest {
         dQueue.insert(nd(n(3), 30));
 
         HashSet<Node> pulledNodes = dQueue.pull();
+        //Mapeia os IDs dos nodes para facilitar as buscas dentro do Set
         Set<Integer> pulledIds = pulledNodes.stream().map(node -> node.id).collect(Collectors.toSet());
         
         assertEquals(3, pulledNodes.size());
