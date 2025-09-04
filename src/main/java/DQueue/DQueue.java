@@ -91,7 +91,7 @@ public class DQueue {
             return newCordinate;
         }
 
-        if(element.dist > coordinates.get(element.node).dist){
+        if(element.dist < coordinates.get(element.node).dist){
             delete(coordinates.get(element.node));
             NodeDistStored newCordinate = new NodeDistStored(element);
             coordinates.put(element.node, newCordinate);
