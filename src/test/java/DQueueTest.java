@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Classe de teste completa para DQueue, utilizando as classes reais do projeto.
+ * Classe de teste completa para DQueue
  * Testa os métodos insert, batchPrepend e pull em diversos cenários,
- * incluindo casos de borda e interações entre os métodos.
+ * incluindo casos de limites e interações entre os métodos.
  */
 class DQueueTest {
 
@@ -37,7 +37,7 @@ class DQueueTest {
     }
 
     @Test
-    // Deve inserir e extrair um único elemento
+    //  inserir e extrair um único elemento
     void testInsertAndPullSingleElement() {
         dQueue.insert(nd(n(1), 10));
         //assertEquals(1, 0););
