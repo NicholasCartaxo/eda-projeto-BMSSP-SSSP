@@ -11,6 +11,7 @@ import main.java.commom.graph.Node;
 public class BMSSP {
     private int k;
     private HashMap<Node, Integer> dists;
+    private Graph graph;
 
     public BMSSP(){
 
@@ -85,10 +86,11 @@ public class BMSSP {
         HashSet<Node> pivots = new HashSet<Node>();
         for(Node root : roots){
             if(countTreeSize(root) >= k){
-                pivots.add(root);
+                Node pivot = graph.nodesById.get(root.id);
+                pivots.add(pivot);
             }
         }
-        
+
         return pivots;
     }
 
