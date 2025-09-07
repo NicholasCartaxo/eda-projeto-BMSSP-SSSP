@@ -5,11 +5,13 @@ import java.util.HashSet;
 
 import main.java.DQueue.util.IntroSelect;
 import main.java.commom.dataStructures.NodeDist;
+import main.java.commom.dataStructures.Pair;
 import main.java.commom.graph.Node;
 
 public class DQueue {
     
     private final int blockSize;
+    private final int upperBound;
 
     private BatchList batchList;
     private InsertTree insertTree;
@@ -18,6 +20,8 @@ public class DQueue {
 
     public DQueue(int blockSize, int upperBound){
         this.blockSize = blockSize;
+        this.upperBound = upperBound;
+
         this.batchList = new BatchList(this.blockSize);
         this.insertTree = new InsertTree(this.blockSize, upperBound);
 
@@ -47,30 +51,37 @@ public class DQueue {
         batchList.batchPrepend(elementsToAdd);
     }
 
-    public HashSet<Node> pull(){
+    public Pair<Integer,HashSet<Node>> pull(){
         HashSet<NodeDistStored> possibleSmallests = new HashSet<NodeDistStored>();
         
         possibleSmallests.addAll(batchList.pull());
         possibleSmallests.addAll(insertTree.pull());
         
-        HashSet<Node> ret = new HashSet<Node>();
+        HashSet<Node> nodes = new HashSet<Node>();
 
         if(possibleSmallests.size() <= blockSize){
             for(NodeDistStored element : possibleSmallests){
-                ret.add(element.node);
+                nodes.add(element.node);
                 delete(element);
             }
-        }else{
-            NodeDistStored blockSizeSmallest = IntroSelect.select(possibleSmallests, blockSize-1);
-            for(NodeDistStored element : possibleSmallests){
-                if(element.compareTo(blockSizeSmallest) <= 0){
-                    ret.add(element.node);
-                    delete(element);
-                }
-            }
+
+            return new Pair<Integer,HashSet<Node>>(upperBound, nodes);
         }
 
-        return ret;
+        NodeDistStored blockSizeSmallest = IntroSelect.select(possibleSmallests, blockSize-1);
+        for(NodeDistStored element : possibleSmallests){
+            if(element.compareTo(blockSizeSmallest) <= 0){
+                nodes.add(element.node);
+                delete(element);
+            }
+        }
+        
+        int upperBoundOfPull = IntroSelect.select(possibleSmallests, blockSize).dist;
+        return new Pair<Integer,HashSet<Node>>(upperBoundOfPull, nodes);
+    }
+
+    public boolean isEmpty(){
+        return batchList.isEmpty() && insertTree.isEmpty();
     }
 
     private NodeDistStored elementToAdd(NodeDist element){
@@ -80,7 +91,7 @@ public class DQueue {
             return newCordinate;
         }
 
-        if(element.dist > coordinates.get(element.node).dist){
+        if(element.dist < coordinates.get(element.node).dist){
             delete(coordinates.get(element.node));
             NodeDistStored newCordinate = new NodeDistStored(element);
             coordinates.put(element.node, newCordinate);

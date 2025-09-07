@@ -1,29 +1,34 @@
 package main.java.commom.graph;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class Graph {
     public int numNodes;
     public int numEdges;
 
-    public Map<Integer,Node> nodesById;
-
-    public Graph(int numNodes, int numEdges){
-        this.numNodes = numNodes;
-        this.numEdges = numEdges;
-    }
+    public HashMap<Integer,Node> nodesById;
 
     public Graph(){
-        this(0,0);
+        numNodes = 0;
+        numEdges = 0;
+        nodesById = new HashMap<Integer,Node>();
     }
 
     public void addNode(int id){
-        nodesById.put(id, new Node(id));
+        createNode(id);
     }
 
     public void addEdge(int idFrom, int idTo, int weight){
-        Node nodeFrom = nodesById.get(idFrom);
-        Node nodeTo = nodesById.get(idTo);
+        Node nodeFrom = nodesById.computeIfAbsent(idFrom, (Integer id)->createNode(id));
+        Node nodeTo = nodesById.computeIfAbsent(idTo, (Integer id)->createNode(id));
+
+        numEdges++;
         nodeFrom.addEdge(new Edge(nodeFrom, nodeTo, weight));        
+    }
+
+    private Node createNode(int id){
+        nodesById.put(id,new Node(id));
+        numNodes++;
+        return null;
     }
 }
