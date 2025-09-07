@@ -8,6 +8,12 @@ public class Graph {
 
     public HashMap<Integer,Node> nodesById;
 
+    public Graph(){
+        numNodes = 0;
+        numEdges = 0;
+        nodesById = new HashMap<Integer,Node>();
+    }
+
     public void addNode(int id){
         createNode(id);
     }
