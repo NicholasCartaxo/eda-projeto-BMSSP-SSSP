@@ -34,9 +34,10 @@ public class BMSSP {
         k = Math.floor(Math.pow(log2(graph.numNodes), 1/3));
         t = Math.floor(Math.pow(log2(graph.numNodes), 2/3));
 
-        double level = Math.floor(log2(graph.numNodes)/t);
+        double level = Math.ceil(log2(graph.numNodes)/t);
 
-        HashSet<Node> nodes = new HashSet<Node>(graph.nodesById.values());
+        HashSet<Node> nodes = new HashSet<Node>();
+        nodes.add(origin);
         bmssp(level, Double.POSITIVE_INFINITY, nodes);
 
         HashMap<Integer,Double> idDists = new HashMap<Integer,Double>();
