@@ -2,6 +2,7 @@ package main.java;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import main.java.commom.dataStructures.FibonacciHeap;
 import main.java.commom.dataStructures.NodeDist;
@@ -13,26 +14,54 @@ import main.java.DQueue.DQueue;
 
 public class BMSSP {
     private Graph graph;
-    private HashMap<Node, Integer> dists;
-    private int k;
-    private int t;
+    private HashMap<Node, Double> dists;
+    private double k;
+    private double t;
     
     public BMSSP(){
     
     }
 
-    private Pair<Integer,HashSet<Node>> bmssp(int level,int upperBound, HashSet<Node> completeNodes){
-        if(level == 0){
-            return baseCase(upperBound,completeNodes);
+    public HashMap<Integer, Double> solve(Graph graph, Node origin){
+        this.graph = graph;
+        dists = new HashMap<Node, Double>();
+
+        for(Node node : graph.nodesById.values()){
+            dists.put(node, Double.POSITIVE_INFINITY);
         }
-        Pair<HashSet<Node>,HashSet<Node>> pivotsPair = findPivots(upperBound,completeNodes);
+        dists.put(origin,0.0);
+
+        k = Math.floor(Math.pow(log2(graph.numNodes), 1/3));
+        t = Math.floor(Math.pow(log2(graph.numNodes), 2/3));
+
+        double level = Math.floor(log2(graph.numNodes)/t);
+
+        HashSet<Node> nodes = new HashSet<Node>(graph.nodesById.values());
+        bmssp(level, Double.POSITIVE_INFINITY, nodes);
+
+        HashMap<Integer,Double> idDists = new HashMap<Integer,Double>();
+        for(Map.Entry<Node,Double> distPair : dists.entrySet()){
+            int id = distPair.getKey().id;
+            double dist = distPair.getValue();
+            idDists.put(id,dist);
+        }
+
+        return idDists;
+    }
+
+
+    private Pair<Double,HashSet<Node>> bmssp(double level,double upperBound, HashSet<Node> initialNodes){
+        if(level == 0){
+            return baseCase(upperBound,initialNodes);
+        }
+        Pair<HashSet<Node>,HashSet<Node>> pivotsPair = findPivots(upperBound,initialNodes);
         HashSet<Node> pivots = pivotsPair.first;
         HashSet<Node> completeByPivots = pivotsPair.second;
     
         int blockSize = (int)Math.pow(2,(level-1)*t);
         DQueue dQueue = new DQueue(blockSize, upperBound);
         
-        int currentUpperBound = Integer.MAX_VALUE;
+        double currentUpperBound = Double.MAX_VALUE;
         for(Node pivot : pivots){
             currentUpperBound = Math.min(currentUpperBound, dists.get(pivot));
             dQueue.insert(new NodeDist(pivot,dists.get(pivot)));
@@ -43,13 +72,13 @@ public class BMSSP {
         }
 
         HashSet<Node> newCompleteNodes = new HashSet<Node>();
-        int newCompleteMaxUpperBound = k*(int)Math.pow(level,t);
-        while(newCompleteNodes.size() < newCompleteMaxUpperBound && !dQueue.isEmpty()){
-            Pair<Integer,HashSet<Node>> prevBoundSet = dQueue.pull();
-            int prevUpperBound = prevBoundSet.first;
+        double newCompleteMaxUpperBound = k*Math.pow(2,level*t);
+        while((newCompleteNodes.size() < newCompleteMaxUpperBound) && (!dQueue.isEmpty())){
+            Pair<Double,HashSet<Node>> prevBoundSet = dQueue.pull();
+            double prevUpperBound = prevBoundSet.first;
             HashSet<Node> prevNodes = prevBoundSet.second;
 
-            Pair<Integer,HashSet<Node>> currentBoundSet = bmssp(level-1,prevUpperBound,prevNodes);
+            Pair<Double,HashSet<Node>> currentBoundSet = bmssp(level-1,prevUpperBound,prevNodes);
             currentUpperBound = currentBoundSet.first;
             HashSet<Node> currentNodes = currentBoundSet.second;
 
@@ -59,9 +88,9 @@ public class BMSSP {
             for(Node node : currentNodes){
                 for(Edge edge : node.outEdges){
                     Node nodeTo = edge.nodeTo;
-                    int weight = edge.weight;
+                    double weight = edge.weight;
 
-                    int newDist = dists.get(node) + weight;
+                    double newDist = dists.get(node) + weight;
                     if(newDist <= dists.get(nodeTo)){
                         dists.put(nodeTo,newDist);
                         if(prevUpperBound <= newDist && newDist < upperBound) dQueue.insert(new NodeDist(nodeTo,newDist));
@@ -71,21 +100,21 @@ public class BMSSP {
             }   
             
             for(Node node : prevNodes){
-                int nodeDist = dists.get(node);
+                double nodeDist = dists.get(node);
                 if(currentUpperBound <= nodeDist && nodeDist < prevUpperBound) newNodeDists.add(new NodeDist(node, nodeDist));
             } 
             dQueue.batchPrepend(newNodeDists);
         }   
 
-        int minUpperBound = Math.min(currentUpperBound,upperBound);
+        double minUpperBound = Math.min(currentUpperBound,upperBound);
         for(Node node : completeByPivots){
             if(dists.get(node) < minUpperBound) newCompleteNodes.add(node);
         }
 
-        return new Pair<Integer,HashSet<Node>>(minUpperBound, newCompleteNodes);
+        return new Pair<Double,HashSet<Node>>(minUpperBound, newCompleteNodes);
     }
 
-    private Pair<Integer, HashSet<Node>> baseCase(int upperBound, HashSet<Node> pivotsSingleton ){
+    private Pair<Double, HashSet<Node>> baseCase(double upperBound, HashSet<Node> pivotsSingleton ){
         HashSet<Node> completeNodes = new HashSet<Node>(); 
         
         Node pivot = pivotsSingleton.iterator().next();
@@ -93,21 +122,21 @@ public class BMSSP {
         FibonacciHeap<NodeDist> minHeap = new FibonacciHeap<NodeDist>();
         minHeap.insert(new NodeDist(pivot, dists.get(pivot)), dists.get(pivot));
 
-        int newUpperBound = dists.get(pivot);
+        double newUpperBound = dists.get(pivot);
 
         while(!minHeap.isEmpty() && completeNodes.size() < k + 1){
             NodeDist currentNodeDist = minHeap.extractMinValue();
             Node currentNode = currentNodeDist.node;
-            int currentDist = currentNodeDist.dist;
+            double currentDist = currentNodeDist.dist;
             
             completeNodes.add(currentNode);
             newUpperBound = Math.max(newUpperBound, currentDist);
 
             for(Edge edge : currentNode.outEdges){
-                int weight = edge.weight;
+                double weight = edge.weight;
                 Node secondNode = edge.nodeTo;
-                int secondDist = dists.get(secondNode);
-                int newDist = currentDist + weight;
+                double secondDist = dists.get(secondNode);
+                double newDist = currentDist + weight;
                 if(newDist <= secondDist && newDist < upperBound){
                     dists.put(secondNode, newDist);
                     NodeDist newNodeDist = new NodeDist(secondNode,newDist);
@@ -124,27 +153,27 @@ public class BMSSP {
         }
 
         if(completeNodes.size() <= k){
-            return new Pair<Integer, HashSet<Node>>(upperBound, completeNodes);
+            return new Pair<Double, HashSet<Node>>(upperBound, completeNodes);
         }else{
             HashSet<Node> newCompleteNodes = new HashSet<Node>();
             for (Node node : completeNodes) {
                 if(dists.get(node) < newUpperBound) newCompleteNodes.add(node);
             }
-            return new Pair<Integer, HashSet<Node>>(newUpperBound, newCompleteNodes);
+            return new Pair<Double, HashSet<Node>>(newUpperBound, newCompleteNodes);
         }
     }
 
-    private Pair<HashSet<Node>,HashSet<Node>> findPivots(int upperBound, HashSet<Node> border) {
+    private Pair<HashSet<Node>,HashSet<Node>> findPivots(double upperBound, HashSet<Node> border) {
         HashSet<Node> completeNodes = new HashSet<Node>(border);
         HashSet<Node> prevNodes = new HashSet<Node>(border);
 
-        for(int i = 0; i < k; i++){
+        for(double i = 0; i < k; i++){
             HashSet<Node> currentNodes = new HashSet<>();
 
             for (Node node : prevNodes) {
                 for (Edge edge : node.outEdges) {
                     Node nodeTo = edge.nodeTo;
-                    int newDistance = dists.get(edge.nodeFrom) + edge.weight;
+                    double newDistance = dists.get(edge.nodeFrom) + edge.weight;
                     
                     if (newDistance <= dists.get(nodeTo)) {
                         dists.put(nodeTo, newDistance);
@@ -176,7 +205,7 @@ public class BMSSP {
         for(Node node : nodes){
             for(Edge edge : node.outEdges){
                 Node nodeTo = edge.nodeTo;
-                int weight = edge.weight;
+                double weight = edge.weight;
 
                 if(dists.get(node)+weight == dists.get(nodeTo) && !forest.nodesById.containsKey(nodeTo.id)){
                     forest.addEdge(node.id, nodeTo.id, weight);
@@ -215,5 +244,8 @@ public class BMSSP {
         return count;
     }
 
+    public static double log2(double n){
+        return Math.log(n) / Math.log(2);
+    }
 }
 
