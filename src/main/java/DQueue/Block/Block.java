@@ -7,12 +7,12 @@ import main.java.DQueue.util.IntroSelect;
 
 public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
     private final int blockSize;
-    public int upperBound;
+    public double upperBound;
 
     private BlockNode head;
     private int size;
     
-    public Block(int blockSize, int upperBound){
+    public Block(int blockSize, double upperBound){
         this.blockSize = blockSize;
         this.upperBound = upperBound;
         size = 0;
@@ -52,7 +52,7 @@ public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
         NodeDistStored median = IntroSelect.select(this, (size()-1)/2);
 
         Block newBlock = new Block(blockSize, upperBound);
-        int newUpperBound = -1;
+        double newUpperBound = -1;
         
         BlockNode aux = head;
         while(aux != null){
@@ -80,7 +80,7 @@ public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
     
     @Override
     public int compareTo(Block o) {
-        return Integer.valueOf(upperBound).compareTo(Integer.valueOf(o.upperBound));
+        return Double.valueOf(upperBound).compareTo(Double.valueOf(o.upperBound));
     }
 
     public int size(){

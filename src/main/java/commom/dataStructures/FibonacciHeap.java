@@ -72,7 +72,7 @@ public class FibonacciHeap<T> {
         /**
          * The key associated with the node. Used for ordering the node in the heap.
          */
-        private int key;
+        private double key;
 
         /**
          * The parent node of this node. This node's parent is the node in the heap's
@@ -121,7 +121,7 @@ public class FibonacciHeap<T> {
          * @param value the data value to store.
          * @param key the priority of this node.
          */
-        public Node(T value, int key) {
+        public Node(T value, double key) {
             this.key = key;
             this.value = value;
             left = this;
@@ -132,7 +132,7 @@ public class FibonacciHeap<T> {
             return value;
         }
 
-        public int getKey() {
+        public double getKey() {
             return key;
         }
 
@@ -178,7 +178,7 @@ public class FibonacciHeap<T> {
      * @param key the key of the new node.
      * @return the new node.
      */
-    public Node<T> insert(T value, int key) {
+    public Node<T> insert(T value, double key) {
         Node<T> newNode = new Node<>(value, key);
         valueToNode.put(value,newNode);
         addToRootList(newNode);
@@ -257,7 +257,7 @@ public class FibonacciHeap<T> {
         return valueToNode.containsKey(value);
     }
 
-    public void decreaseKeyByValue(T value, int newKey){
+    public void decreaseKeyByValue(T value, double newKey){
         decreaseKey(valueToNode.get(value), newKey);
     }
 
@@ -272,7 +272,7 @@ public class FibonacciHeap<T> {
      * @param newKey The new key value, which must be smaller than the current key.
      * @throws IllegalArgumentException If the new key is greater than or equal to the current key.
      */
-    private void decreaseKey(Node<T> node, int newKey) {
+    private void decreaseKey(Node<T> node, double newKey) {
         if (newKey >= node.key) {
             throw new IllegalArgumentException("The new key must be less than the current key");
         }

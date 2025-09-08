@@ -15,20 +15,22 @@ public class Graph {
     }
 
     public void addNode(int id){
-        createNode(id);
+        nodesById.put(id,new Node(id));
+        numNodes++;
     }
 
-    public void addEdge(int idFrom, int idTo, int weight){
-        Node nodeFrom = nodesById.computeIfAbsent(idFrom, (Integer id)->createNode(id));
-        Node nodeTo = nodesById.computeIfAbsent(idTo, (Integer id)->createNode(id));
+    public void addEdge(int idFrom, int idTo, double weight){
+        if(!nodesById.containsKey(idFrom)){
+            addNode(idFrom);
+        }
+        if(!nodesById.containsKey(idTo)){
+            addNode(idTo);
+        }
+        Node nodeFrom = nodesById.get(idFrom);
+        Node nodeTo = nodesById.get(idTo);
 
         numEdges++;
         nodeFrom.addEdge(new Edge(nodeFrom, nodeTo, weight));        
     }
 
-    private Node createNode(int id){
-        nodesById.put(id,new Node(id));
-        numNodes++;
-        return null;
-    }
 }

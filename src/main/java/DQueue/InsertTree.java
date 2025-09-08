@@ -15,7 +15,7 @@ class InsertTree implements BlockCollection{
     private InsertNode root;
     private int size;
 
-    public InsertTree(int blockSize, int upperBound){
+    public InsertTree(int blockSize, double upperBound){
         this.blockSize = blockSize;
         size = 0;
 
@@ -24,7 +24,7 @@ class InsertTree implements BlockCollection{
 
     public void insertElement(NodeDistStored element) {
         InsertNode node = root;
-        while(node != null){
+        while(node != null && node.value != null){
             if(element.dist > node.value.upperBound){
                 node = node.right;
                 continue;
@@ -58,7 +58,7 @@ class InsertTree implements BlockCollection{
     }
 
     public boolean isEmpty(){
-        return size == 0;
+        return root.value.isEmpty();
     }
 
     private void getBlockSizeSmallest(InsertNode entry, HashSet<NodeDistStored> ret) {

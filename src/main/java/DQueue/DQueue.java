@@ -11,14 +11,14 @@ import main.java.commom.graph.Node;
 public class DQueue {
     
     private final int blockSize;
-    private final int upperBound;
+    private final double upperBound;
 
     private BatchList batchList;
     private InsertTree insertTree;
 
     private HashMap<Node,NodeDistStored> coordinates;
 
-    public DQueue(int blockSize, int upperBound){
+    public DQueue(int blockSize, double upperBound){
         this.blockSize = blockSize;
         this.upperBound = upperBound;
 
@@ -30,9 +30,9 @@ public class DQueue {
 
     public void insert(NodeDist element){
         NodeDistStored elementToAdd = elementToAdd(element);
-        elementToAdd.blockCollection = insertTree;
-
+        
         if(elementToAdd != null){
+            elementToAdd.blockCollection = insertTree;
             insertTree.insertElement(elementToAdd);
         }
     }
@@ -51,7 +51,7 @@ public class DQueue {
         batchList.batchPrepend(elementsToAdd);
     }
 
-    public Pair<Integer,HashSet<Node>> pull(){
+    public Pair<Double,HashSet<Node>> pull(){
         HashSet<NodeDistStored> possibleSmallests = new HashSet<NodeDistStored>();
         
         possibleSmallests.addAll(batchList.pull());
@@ -65,7 +65,7 @@ public class DQueue {
                 delete(element);
             }
 
-            return new Pair<Integer,HashSet<Node>>(upperBound, nodes);
+            return new Pair<Double,HashSet<Node>>(upperBound, nodes);
         }
 
         NodeDistStored blockSizeSmallest = IntroSelect.select(possibleSmallests, blockSize-1);
@@ -76,12 +76,12 @@ public class DQueue {
             }
         }
         
-        int upperBoundOfPull = IntroSelect.select(possibleSmallests, blockSize).dist;
-        return new Pair<Integer,HashSet<Node>>(upperBoundOfPull, nodes);
+        double upperBoundOfPull = IntroSelect.select(possibleSmallests, blockSize).dist;
+        return new Pair<Double,HashSet<Node>>(upperBoundOfPull, nodes);
     }
 
     public boolean isEmpty(){
-        return batchList.isEmpty() && insertTree.isEmpty();
+        return coordinates.size() == 0;
     }
 
     private NodeDistStored elementToAdd(NodeDist element){

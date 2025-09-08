@@ -52,7 +52,7 @@ class BatchList implements BlockCollection {
     }
 
     private void addFirst(HashSet<NodeDistStored> elements) {
-        BatchNode n = new BatchNode(new Block(blockSize, 0));
+        BatchNode n = new BatchNode(new Block(blockSize, 0.0));
         
         for(NodeDistStored element : elements){
             element.blockContainer = n;

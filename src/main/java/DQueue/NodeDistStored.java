@@ -12,7 +12,7 @@ public class NodeDistStored extends NodeDist {
     public BlockContainer blockContainer;
     public BlockNode blockNode;
 
-    public NodeDistStored(Node node, int dist) {
+    public NodeDistStored(Node node, double dist) {
         super(node, dist);
     }
 
