@@ -3,8 +3,8 @@ package main.java;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.PriorityQueue;
 
-import main.java.commom.dataStructures.FibonacciHeap;
 import main.java.commom.dataStructures.NodeDist;
 import main.java.commom.dataStructures.Pair;
 import main.java.commom.graph.Edge;
@@ -123,16 +123,18 @@ public class BMSSP {
         
         Node pivot = pivotsSingleton.iterator().next();
         
-        FibonacciHeap<NodeDist> minHeap = new FibonacciHeap<NodeDist>();
-        minHeap.insert(new NodeDist(pivot, dists.get(pivot)), dists.get(pivot));
+        PriorityQueue<NodeDist> minHeap = new PriorityQueue<NodeDist>();
+        minHeap.add(new NodeDist(pivot, dists.get(pivot)));
 
         long newUpperBound = dists.get(pivot);
 
         while(!minHeap.isEmpty() && completeNodes.size() < k + 1){
-            NodeDist currentNodeDist = minHeap.extractMinValue();
+            NodeDist currentNodeDist = minHeap.remove();
             Node currentNode = currentNodeDist.node;
             long currentDist = currentNodeDist.dist;
             
+            if(currentDist > dists.get(currentNode)) continue;
+
             completeNodes.add(currentNode);
             newUpperBound = Math.max(newUpperBound, currentDist);
 
@@ -144,12 +146,7 @@ public class BMSSP {
                 if(newDist <= secondDist && newDist < upperBound){
                     dists.put(secondNode, newDist);
                     NodeDist newNodeDist = new NodeDist(secondNode,newDist);
-                    if(!minHeap.containsValue(newNodeDist)){
-                        minHeap.insert(newNodeDist, newNodeDist.dist);
-                    }else{
-                        minHeap.decreaseKeyByValue(newNodeDist, newNodeDist.dist);
-                    }
-
+                    minHeap.add(newNodeDist);
                 } 
 
             }
