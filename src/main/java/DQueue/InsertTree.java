@@ -11,12 +11,14 @@ class InsertTree implements BlockCollection{
 
     private static final InsertNode nilNode = new InsertNode(null, null, null, null, ColorEnum.BLACK);
     private final int blockSize;
+    private final long upperBound;
 
     private InsertNode root;
     private int size;
 
-    public InsertTree(int blockSize, double upperBound){
+    public InsertTree(int blockSize, long upperBound){
         this.blockSize = blockSize;
+        this.upperBound = upperBound;
         size = 0;
 
         insertBlock(new Block(this.blockSize,upperBound));
@@ -48,6 +50,8 @@ class InsertTree implements BlockCollection{
     public void delete(BlockContainer blockContainer){
         if(size != 1){
             delete((InsertNode)blockContainer);
+        }else{
+            ((InsertNode)blockContainer).value.upperBound = upperBound;
         }
     }
 

@@ -34,8 +34,8 @@ public class BMSSP {
         }
         dists.put(origin,0L);
 
-        k = (long)Math.floor(Math.pow(log2(graph.numNodes), 1/3));
-        t = (long)Math.floor(Math.pow(log2(graph.numNodes), 2/3));
+        k = (long)Math.floor(Math.pow(Math.log(graph.numNodes), 1.0/3.0));
+        t = (long)Math.floor(Math.pow(Math.log(graph.numNodes), 2.0/3.0));
 
         long level = (long)Math.ceil(log2(graph.numNodes)/t);
 
@@ -194,8 +194,8 @@ public class BMSSP {
             }
         }
 
-        Graph pivotForest = buildForest(prevNodes);
-        HashSet<Node> pivots = getPivots(pivotForest);
+        Graph pivotForest = buildForest(completeNodes);
+        HashSet<Node> pivots = getPivots(pivotForest,border);
         
         return new Pair<HashSet<Node>,HashSet<Node>>(pivots, completeNodes);   
     }
@@ -217,7 +217,7 @@ public class BMSSP {
         return forest;
     }
 
-    private HashSet<Node> getPivots(Graph forest){
+    private HashSet<Node> getPivots(Graph forest, HashSet<Node> border){
         HashSet<Node> roots = new HashSet<Node>(forest.nodesById.values());
 
         for(Node node : forest.nodesById.values()){
@@ -230,7 +230,9 @@ public class BMSSP {
         for(Node root : roots){
             if(countTreeSize(root) >= k){
                 Node pivot = graph.nodesById.get(root.id);
-                pivots.add(pivot);
+                if(border.contains(pivot)){
+                    pivots.add(pivot);
+                }
             }
         }
 

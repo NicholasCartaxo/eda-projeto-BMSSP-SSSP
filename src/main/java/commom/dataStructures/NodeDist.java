@@ -37,7 +37,7 @@ public class NodeDist implements Comparable<NodeDist> {
     public int compareTo(NodeDist o) {
         if(dist == o.dist)
             return node.compareTo(o.node);
-        return Double.valueOf(dist).compareTo(Double.valueOf(o.dist));
+        return Long.valueOf(dist).compareTo(Long.valueOf(o.dist));
     }
 
     
