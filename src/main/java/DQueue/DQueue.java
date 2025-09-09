@@ -11,14 +11,14 @@ import main.java.commom.graph.Node;
 public class DQueue {
     
     private final int blockSize;
-    private final double upperBound;
+    private final long upperBound;
 
     private BatchList batchList;
     private InsertTree insertTree;
 
     private HashMap<Node,NodeDistStored> coordinates;
 
-    public DQueue(int blockSize, double upperBound){
+    public DQueue(int blockSize, long upperBound){
         this.blockSize = blockSize;
         this.upperBound = upperBound;
 
@@ -51,7 +51,7 @@ public class DQueue {
         batchList.batchPrepend(elementsToAdd);
     }
 
-    public Pair<Double,HashSet<Node>> pull(){
+    public Pair<Long,HashSet<Node>> pull(){
         HashSet<NodeDistStored> possibleSmallests = new HashSet<NodeDistStored>();
         
         possibleSmallests.addAll(batchList.pull());
@@ -65,7 +65,7 @@ public class DQueue {
                 delete(element);
             }
 
-            return new Pair<Double,HashSet<Node>>(upperBound, nodes);
+            return new Pair<Long,HashSet<Node>>(upperBound, nodes);
         }
 
         NodeDistStored blockSizeSmallest = IntroSelect.select(possibleSmallests, blockSize-1);
@@ -76,8 +76,8 @@ public class DQueue {
             }
         }
         
-        double upperBoundOfPull = IntroSelect.select(possibleSmallests, blockSize).dist;
-        return new Pair<Double,HashSet<Node>>(upperBoundOfPull, nodes);
+        long upperBoundOfPull = IntroSelect.select(possibleSmallests, blockSize).dist;
+        return new Pair<Long,HashSet<Node>>(upperBoundOfPull, nodes);
     }
 
     public boolean isEmpty(){

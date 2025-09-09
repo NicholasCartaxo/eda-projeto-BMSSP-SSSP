@@ -19,7 +19,7 @@ public class Graph {
         numNodes++;
     }
 
-    public void addEdge(int idFrom, int idTo, double weight){
+    public void addEdge(int idFrom, int idTo, long weight){
         if(!nodesById.containsKey(idFrom)){
             addNode(idFrom);
         }

@@ -4,9 +4,9 @@ import main.java.commom.graph.Node;
 
 public class NodeDist implements Comparable<NodeDist> {
     public final Node node;
-    public final double dist;
+    public final long dist;
 
-    public NodeDist(Node node, double dist){
+    public NodeDist(Node node, long dist){
         this.node = node;
         this.dist = dist;
     }
