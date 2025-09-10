@@ -56,7 +56,7 @@ public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
         
         BlockNode aux = head;
         while(aux != null){
-            if(aux.value.compareTo(median) <= 0){
+            if(aux.value.compareTo(median) < 0){
                 newBlock.addFirst(aux.value);
                 newUpperBound = Math.max(newUpperBound,aux.value.dist);
                 remove(aux);

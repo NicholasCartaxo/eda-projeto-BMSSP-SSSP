@@ -14,44 +14,39 @@ class InsertTree implements BlockCollection{
     private final long upperBound;
 
     private InsertNode root;
-    private int size;
 
     public InsertTree(int blockSize, long upperBound){
         this.blockSize = blockSize;
         this.upperBound = upperBound;
-        size = 0;
 
         insertBlock(new Block(this.blockSize,upperBound));
     }
 
     public void insertElement(NodeDistStored element) {
         InsertNode node = root;
-        while(node != null && node.value != null){
-            if(element.dist > node.value.upperBound){
-                node = node.right;
-                continue;
-            }
-            if(node.left.value != null && element.dist <= node.left.value.upperBound){
-                node = node.left;
-            }else{
-                node.value.addFirst(element);
-                element.blockContainer = node;
+        InsertNode targetNode = root;
 
-                if(node.value.isFull()){
-                    insertBlock(node.value.split());
-                }
-                return;
+        while (node != null && node.value != null) {
+            if (element.dist <= node.value.upperBound) {
+                targetNode = node;
+                node = node.left;
+            } else {
+                node = node.right;
             }
         }
-        return;
+
+        targetNode.value.addFirst(element);
+        element.blockContainer = targetNode;
+
+        if (targetNode.value.isFull()) {
+            insertBlock(targetNode.value.split());
+        }
     }
 
     @Override
     public void delete(BlockContainer blockContainer){
-        if(size != 1){
+        if(((InsertNode)blockContainer).value.upperBound != upperBound){
             delete((InsertNode)blockContainer);
-        }else{
-            ((InsertNode)blockContainer).value.upperBound = upperBound;
         }
     }
 
@@ -59,10 +54,6 @@ class InsertTree implements BlockCollection{
         HashSet<NodeDistStored> ret = new HashSet<NodeDistStored>();
         getBlockSizeSmallest(root, ret);
         return ret;
-    }
-
-    public boolean isEmpty(){
-        return root.value.isEmpty();
     }
 
     private void getBlockSizeSmallest(InsertNode entry, HashSet<NodeDistStored> ret) {
@@ -106,7 +97,6 @@ class InsertTree implements BlockCollection{
         newNode.right = nilNode;
         root.parent = nilNode;
         insertRBFixup((InsertNode) newNode);
-        size++;
         return newNode;
     }
     
@@ -143,7 +133,6 @@ class InsertTree implements BlockCollection{
                 deleteRBFixup((InsertNode)replaceNode);
             }
         }
-        size--;
         return replaceNode;
     }
     
