@@ -36,8 +36,8 @@ public class BMSSP {
         }
         dists.put(origin,new NodeDist(origin, 0));
 
-        k = (long)Math.floor(Math.pow(Math.log(graph.numNodes), 1.0/3.0));
-        t = (long)Math.floor(Math.pow(Math.log(graph.numNodes), 2.0/3.0));
+        k = (long)Math.floor(Math.pow(log2(graph.numNodes), 1.0/3.0));
+        t = (long)Math.floor(Math.pow(log2(graph.numNodes), 2.0/3.0));
 
         long level = (long)Math.ceil(log2(graph.numNodes)/t);
 
@@ -129,7 +129,7 @@ public class BMSSP {
     }
 
     private Pair<NodeDist, HashSet<Node>> baseCase(NodeDist upperBound, HashSet<Node> pivotsSingleton ){
-        HashSet<Node> completeNodes = new HashSet<Node>(); 
+        HashSet<Node> completeNodes = new HashSet<Node>(pivotsSingleton); 
         
         Node pivot = pivotsSingleton.iterator().next();
         
@@ -141,7 +141,6 @@ public class BMSSP {
         while(!minHeap.isEmpty() && completeNodes.size() < k + 1){
             NodeDist currentNodeDist = minHeap.remove();
             Node currentNode = currentNodeDist.node;
-            long currentDist = currentNodeDist.dist;
             
             if(currentNodeDist.compareTo(dists.get(currentNode)) > 0) continue;
 
@@ -152,13 +151,15 @@ public class BMSSP {
 
             for(Edge edge : currentNode.outEdges){
                 long weight = edge.weight;
+                
                 Node secondNode = edge.nodeTo;
                 NodeDist secondDist = dists.get(secondNode);
-                NodeDist newDist = new NodeDist(secondNode, secondDist.dist+weight);
+                
+                NodeDist newDist = new NodeDist(secondNode, currentNodeDist.dist+weight);
+                
                 if(newDist.compareTo(secondDist) <= 0 && newDist.compareTo(upperBound) < 0){
                     dists.put(secondNode, newDist);
-                    NodeDist newNodeDist = newDist;
-                    minHeap.add(newNodeDist);
+                    minHeap.add(newDist);
                 } 
 
             }
@@ -187,7 +188,7 @@ public class BMSSP {
                 for (Edge edge : node.outEdges) {
                     Node nodeTo = edge.nodeTo;
                     NodeDist newDistance = new NodeDist(nodeTo, dists.get(edge.nodeFrom).dist + edge.weight);
-                    
+
                     if (newDistance.compareTo(dists.get(nodeTo)) <= 0) {
                         dists.put(nodeTo, newDistance);
                         

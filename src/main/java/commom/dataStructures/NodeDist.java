@@ -12,6 +12,11 @@ public class NodeDist implements Comparable<NodeDist> {
     }
 
     @Override
+    public String toString() {
+        return "NodeDist [node=" + node.id + ", dist=" + dist + "]";
+    }
+
+    @Override
     public int hashCode() {
         return node.hashCode();
     }
