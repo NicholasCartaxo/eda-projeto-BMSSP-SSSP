@@ -14,10 +14,12 @@ import main.java.DQueue.DQueue;
 
 public class BMSSP {
 
-    private final long INFINITY = 100000000000000000L;
+    private static final long INFINITY = 100000000000000000L;
+    private static final NodeDist INFINITY_NODEDIST = new NodeDist(new Node(Integer.MIN_VALUE), INFINITY);
+    
 
     private Graph graph;
-    private HashMap<Node, Long> dists;
+    private HashMap<Node, NodeDist> dists;
     private long k;
     private long t;
     
@@ -27,12 +29,12 @@ public class BMSSP {
 
     public HashMap<Integer, Long> solve(Graph graph, Node origin){
         this.graph = graph;
-        dists = new HashMap<Node, Long>();
+        dists = new HashMap<Node, NodeDist>();
 
         for(Node node : graph.nodesById.values()){
-            dists.put(node, INFINITY);
+            dists.put(node, INFINITY_NODEDIST);
         }
-        dists.put(origin,0L);
+        dists.put(origin,new NodeDist(origin, 0));
 
         k = (long)Math.floor(Math.pow(Math.log(graph.numNodes), 1.0/3.0));
         t = (long)Math.floor(Math.pow(Math.log(graph.numNodes), 2.0/3.0));
@@ -41,12 +43,12 @@ public class BMSSP {
 
         HashSet<Node> nodes = new HashSet<Node>();
         nodes.add(origin);
-        bmssp(level, INFINITY, nodes);
+        bmssp(level, INFINITY_NODEDIST, nodes);
 
         HashMap<Integer,Long> idDists = new HashMap<Integer,Long>();
-        for(Map.Entry<Node,Long> distPair : dists.entrySet()){
+        for(Map.Entry<Node,NodeDist> distPair : dists.entrySet()){
             int id = distPair.getKey().id;
-            long dist = distPair.getValue();
+            long dist = distPair.getValue().dist;
             idDists.put(id,dist);
         }
 
@@ -54,7 +56,7 @@ public class BMSSP {
     }
 
 
-    private Pair<Long,HashSet<Node>> bmssp(long level,long upperBound, HashSet<Node> initialNodes){
+    private Pair<NodeDist,HashSet<Node>> bmssp(long level, NodeDist upperBound, HashSet<Node> initialNodes){
         if(level == 0){
             return baseCase(upperBound,initialNodes);
         }
@@ -65,10 +67,12 @@ public class BMSSP {
         int blockSize = (int)Math.pow(2,(level-1)*t);
         DQueue dQueue = new DQueue(blockSize, upperBound);
         
-        long currentUpperBound = INFINITY;
+        NodeDist currentUpperBound = INFINITY_NODEDIST;
         for(Node pivot : pivots){
-            currentUpperBound = Math.min(currentUpperBound, dists.get(pivot));
-            dQueue.insert(new NodeDist(pivot,dists.get(pivot)));
+            if(currentUpperBound.compareTo(dists.get(pivot)) > 0){
+                currentUpperBound = dists.get(pivot);
+            }
+            dQueue.insert(dists.get(pivot));
         }
 
         if(pivots.isEmpty()){
@@ -78,11 +82,11 @@ public class BMSSP {
         HashSet<Node> newCompleteNodes = new HashSet<Node>();
         long newCompleteMaxUpperBound = k*(long)Math.pow(2,level*t);
         while((newCompleteNodes.size() < newCompleteMaxUpperBound) && (!dQueue.isEmpty())){
-            Pair<Long,HashSet<Node>> prevBoundSet = dQueue.pull();
-            long prevUpperBound = prevBoundSet.first;
+            Pair<NodeDist,HashSet<Node>> prevBoundSet = dQueue.pull();
+            NodeDist prevUpperBound = prevBoundSet.first;
             HashSet<Node> prevNodes = prevBoundSet.second;
 
-            Pair<Long,HashSet<Node>> currentBoundSet = bmssp(level-1,prevUpperBound,prevNodes);
+            Pair<NodeDist,HashSet<Node>> currentBoundSet = bmssp(level-1,prevUpperBound,prevNodes);
             currentUpperBound = currentBoundSet.first;
             HashSet<Node> currentNodes = currentBoundSet.second;
 
@@ -94,58 +98,66 @@ public class BMSSP {
                     Node nodeTo = edge.nodeTo;
                     long weight = edge.weight;
 
-                    long newDist = dists.get(node) + weight;
-                    if(newDist <= dists.get(nodeTo)){
+                    NodeDist newDist = new NodeDist(nodeTo, dists.get(node).dist + weight);
+                    if(newDist.compareTo(dists.get(nodeTo)) <= 0){
                         dists.put(nodeTo,newDist);
-                        if(prevUpperBound <= newDist && newDist < upperBound) dQueue.insert(new NodeDist(nodeTo,newDist));
-                        else if(currentUpperBound <= newDist && newDist < prevUpperBound) newNodeDists.add(new NodeDist(nodeTo,newDist));
+                        if(prevUpperBound.compareTo(newDist) <= 0 && newDist.compareTo(upperBound) < 0) dQueue.insert(newDist);
+                        else if(currentUpperBound.compareTo(newDist) <= 0 && newDist.compareTo(prevUpperBound) < 0) newNodeDists.add(newDist);
                     }
                 }
             }   
             
             for(Node node : prevNodes){
-                long nodeDist = dists.get(node);
-                if(currentUpperBound <= nodeDist && nodeDist < prevUpperBound) newNodeDists.add(new NodeDist(node, nodeDist));
+                NodeDist nodeDist = dists.get(node);
+                if(currentUpperBound.compareTo(nodeDist) <= 0 && nodeDist.compareTo(prevUpperBound) < 0) newNodeDists.add(nodeDist);
             } 
             dQueue.batchPrepend(newNodeDists);
         }   
 
-        long minUpperBound = Math.min(currentUpperBound,upperBound);
-        for(Node node : completeByPivots){
-            if(dists.get(node) < minUpperBound) newCompleteNodes.add(node);
+        NodeDist minUpperBound;
+        if(currentUpperBound.compareTo(upperBound) <= 0){
+            minUpperBound = currentUpperBound;
+        }else{
+            minUpperBound = upperBound;
         }
 
-        return new Pair<Long,HashSet<Node>>(minUpperBound, newCompleteNodes);
+        for(Node node : completeByPivots){
+            if(dists.get(node).compareTo(minUpperBound) < 0) newCompleteNodes.add(node);
+        }
+
+        return new Pair<NodeDist,HashSet<Node>>(minUpperBound, newCompleteNodes);
     }
 
-    private Pair<Long, HashSet<Node>> baseCase(long upperBound, HashSet<Node> pivotsSingleton ){
+    private Pair<NodeDist, HashSet<Node>> baseCase(NodeDist upperBound, HashSet<Node> pivotsSingleton ){
         HashSet<Node> completeNodes = new HashSet<Node>(); 
         
         Node pivot = pivotsSingleton.iterator().next();
         
         PriorityQueue<NodeDist> minHeap = new PriorityQueue<NodeDist>();
-        minHeap.add(new NodeDist(pivot, dists.get(pivot)));
+        minHeap.add(dists.get(pivot));
 
-        long newUpperBound = dists.get(pivot);
+        NodeDist newUpperBound = dists.get(pivot);
 
         while(!minHeap.isEmpty() && completeNodes.size() < k + 1){
             NodeDist currentNodeDist = minHeap.remove();
             Node currentNode = currentNodeDist.node;
             long currentDist = currentNodeDist.dist;
             
-            if(currentDist > dists.get(currentNode)) continue;
+            if(currentNodeDist.compareTo(dists.get(currentNode)) > 0) continue;
 
             completeNodes.add(currentNode);
-            newUpperBound = Math.max(newUpperBound, currentDist);
+            if(newUpperBound.compareTo(currentNodeDist) < 0){
+                newUpperBound = currentNodeDist;
+            }
 
             for(Edge edge : currentNode.outEdges){
                 long weight = edge.weight;
                 Node secondNode = edge.nodeTo;
-                long secondDist = dists.get(secondNode);
-                long newDist = currentDist + weight;
-                if(newDist <= secondDist && newDist < upperBound){
+                NodeDist secondDist = dists.get(secondNode);
+                NodeDist newDist = new NodeDist(secondNode, secondDist.dist+weight);
+                if(newDist.compareTo(secondDist) <= 0 && newDist.compareTo(upperBound) < 0){
                     dists.put(secondNode, newDist);
-                    NodeDist newNodeDist = new NodeDist(secondNode,newDist);
+                    NodeDist newNodeDist = newDist;
                     minHeap.add(newNodeDist);
                 } 
 
@@ -154,17 +166,17 @@ public class BMSSP {
         }
 
         if(completeNodes.size() <= k){
-            return new Pair<Long, HashSet<Node>>(upperBound, completeNodes);
+            return new Pair<NodeDist, HashSet<Node>>(upperBound, completeNodes);
         }else{
             HashSet<Node> newCompleteNodes = new HashSet<Node>();
             for (Node node : completeNodes) {
-                if(dists.get(node) < newUpperBound) newCompleteNodes.add(node);
+                if(dists.get(node).compareTo(newUpperBound) < 0) newCompleteNodes.add(node);
             }
-            return new Pair<Long, HashSet<Node>>(newUpperBound, newCompleteNodes);
+            return new Pair<NodeDist, HashSet<Node>>(newUpperBound, newCompleteNodes);
         }
     }
 
-    private Pair<HashSet<Node>,HashSet<Node>> findPivots(long upperBound, HashSet<Node> border) {
+    private Pair<HashSet<Node>,HashSet<Node>> findPivots(NodeDist upperBound, HashSet<Node> border) {
         HashSet<Node> completeNodes = new HashSet<Node>(border);
         HashSet<Node> prevNodes = new HashSet<Node>(border);
 
@@ -174,12 +186,12 @@ public class BMSSP {
             for (Node node : prevNodes) {
                 for (Edge edge : node.outEdges) {
                     Node nodeTo = edge.nodeTo;
-                    long newDistance = dists.get(edge.nodeFrom) + edge.weight;
+                    NodeDist newDistance = new NodeDist(nodeTo, dists.get(edge.nodeFrom).dist + edge.weight);
                     
-                    if (newDistance <= dists.get(nodeTo)) {
+                    if (newDistance.compareTo(dists.get(nodeTo)) <= 0) {
                         dists.put(nodeTo, newDistance);
                         
-                        if (newDistance < upperBound) {
+                        if (newDistance.compareTo(upperBound) < 0) {
                             currentNodes.add(nodeTo);
                         }
                     }
@@ -208,7 +220,7 @@ public class BMSSP {
                 Node nodeTo = edge.nodeTo;
                 long weight = edge.weight;
 
-                if(dists.get(node)+weight == dists.get(nodeTo) && !forest.nodesById.containsKey(nodeTo.id)){
+                if(new NodeDist(nodeTo, dists.get(node).dist+weight).compareTo(dists.get(nodeTo)) == 0 && !forest.nodesById.containsKey(nodeTo.id)){
                     forest.addEdge(node.id, nodeTo.id, weight);
                 }
             }
