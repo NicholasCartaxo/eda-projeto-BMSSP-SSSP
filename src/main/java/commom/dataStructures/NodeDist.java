@@ -1,14 +1,23 @@
 package main.java.commom.dataStructures;
 
+import main.java.commom.graph.Edge;
 import main.java.commom.graph.Node;
 
 public class NodeDist implements Comparable<NodeDist> {
     public final Node node;
     public final long dist;
+    public final int numEdges;
+    public final NodeDist prev;
 
-    public NodeDist(Node node, long dist){
+    public NodeDist(Node node, long dist, int numEdges, NodeDist prev){
         this.node = node;
         this.dist = dist;
+        this.numEdges = numEdges;
+        this.prev = prev;
+    }
+
+    public NodeDist addEdge(Edge edge){
+        return new NodeDist(edge.nodeTo, dist+edge.weight, numEdges+1, this);
     }
 
     @Override
@@ -40,9 +49,19 @@ public class NodeDist implements Comparable<NodeDist> {
 
     @Override
     public int compareTo(NodeDist o) {
-        if(dist == o.dist)
+        if(dist != o.dist){
+            return Long.compare(dist, o.dist);
+        }
+
+        if(numEdges != o.numEdges){
+            return Integer.compare(numEdges, o.numEdges);
+        }
+
+        if(!node.equals(o.node)){
             return node.compareTo(o.node);
-        return Long.valueOf(dist).compareTo(Long.valueOf(o.dist));
+        }
+        if(prev == null && o.prev == null) return 0;
+        return prev.compareTo(o.prev);
     }
 
     
