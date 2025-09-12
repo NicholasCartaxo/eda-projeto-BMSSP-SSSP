@@ -1,23 +1,25 @@
 package main.java.commom.dataStructures;
 
+import java.util.Objects;
+
 import main.java.commom.graph.Edge;
 import main.java.commom.graph.Node;
 
 public class NodeDist implements Comparable<NodeDist> {
     public final Node node;
     public final long dist;
-    public final int numEdges;
+    public final int numNodes;
     public final NodeDist prev;
 
-    public NodeDist(Node node, long dist, int numEdges, NodeDist prev){
+    public NodeDist(Node node, long dist, int numNodes, NodeDist prev){
         this.node = node;
         this.dist = dist;
-        this.numEdges = numEdges;
+        this.numNodes = numNodes;
         this.prev = prev;
     }
 
     public NodeDist addEdge(Edge edge){
-        return new NodeDist(edge.nodeTo, dist+edge.weight, numEdges+1, this);
+        return new NodeDist(edge.nodeTo, dist+edge.weight, numNodes+1, this);
     }
 
     @Override
@@ -53,15 +55,40 @@ public class NodeDist implements Comparable<NodeDist> {
             return Long.compare(dist, o.dist);
         }
 
-        if(numEdges != o.numEdges){
-            return Integer.compare(numEdges, o.numEdges);
+        if(numNodes != o.numNodes){
+            return Integer.compare(numNodes, o.numNodes);
         }
 
-        if(!node.equals(o.node)){
-            return node.compareTo(o.node);
+        return compareNode(o);
+    }
+    
+    private int compareNode(NodeDist o){
+        NodeDist currentThis = this;
+        NodeDist currentOther = o;
+
+        while (currentThis != null && currentOther != null) {
+            int nodeComparison = Objects.compare(
+                currentThis.node, 
+                currentOther.node, 
+                java.util.Comparator.nullsFirst(Node::compareTo)
+            );
+
+            if (nodeComparison != 0) {
+                return nodeComparison;
+            }
+
+            currentThis = currentThis.prev;
+            currentOther = currentOther.prev;
         }
-        if(prev == null && o.prev == null) return 0;
-        return prev.compareTo(o.prev);
+
+        if (currentThis == null && currentOther != null) {
+            return -1;
+        }
+        if (currentThis != null && currentOther == null) {
+            return 1;
+        }
+        
+        return 0;
     }
 
     
