@@ -80,8 +80,8 @@ public class BMSSP {
         }
 
         HashSet<Node> newCompleteNodes = new HashSet<Node>();
-        long newCompleteMaxUpperBound = k*(long)Math.pow(2,level*t);
-        while((newCompleteNodes.size() < newCompleteMaxUpperBound) && (!dQueue.isEmpty())){
+        long newCompleteNodesMaxSize = k*(long)Math.pow(2,level*t);
+        while((newCompleteNodes.size() < newCompleteNodesMaxSize) && (!dQueue.isEmpty())){
             Pair<NodeDist,HashSet<Node>> prevBoundSet = dQueue.pull();
             NodeDist prevUpperBound = prevBoundSet.first;
             HashSet<Node> prevNodes = prevBoundSet.second;
@@ -96,7 +96,6 @@ public class BMSSP {
             for(Node node : currentNodes){
                 for(Edge edge : node.outEdges){
                     Node nodeTo = edge.nodeTo;
-                    long weight = edge.weight;
 
                     NodeDist newDist = dists.get(node).addEdge(edge);
                     if(newDist.compareTo(dists.get(nodeTo)) <= 0){
@@ -150,14 +149,10 @@ public class BMSSP {
             }
 
             for(Edge edge : currentNode.outEdges){
-                long weight = edge.weight;
-                
                 Node secondNode = edge.nodeTo;
-                NodeDist secondDist = dists.get(secondNode);
-                
                 NodeDist newDist = currentNodeDist.addEdge(edge);                
 
-                if(newDist.compareTo(secondDist) <= 0 && newDist.compareTo(upperBound) < 0){
+                if(newDist.compareTo(dists.get(secondNode)) <= 0 && newDist.compareTo(upperBound) < 0){
                     dists.put(secondNode, newDist);
                     minHeap.add(newDist);
                 } 
@@ -187,7 +182,7 @@ public class BMSSP {
             for (Node node : prevNodes) {
                 for (Edge edge : node.outEdges) {
                     Node nodeTo = edge.nodeTo;
-                    NodeDist newDistance = dists.get(edge.nodeFrom).addEdge(edge);
+                    NodeDist newDistance = dists.get(node).addEdge(edge);
 
                     if (newDistance.compareTo(dists.get(nodeTo)) <= 0) {
                         dists.put(nodeTo, newDistance);
@@ -219,10 +214,9 @@ public class BMSSP {
         for(Node node : nodes){
             for(Edge edge : node.outEdges){
                 Node nodeTo = edge.nodeTo;
-                long weight = edge.weight;
 
                 if(dists.get(node).addEdge(edge).compareTo(dists.get(nodeTo)) == 0){
-                    forest.addEdge(node.id, nodeTo.id, weight);
+                    forest.addEdge(node.id, nodeTo.id, 1);
                 }
             }
         }
