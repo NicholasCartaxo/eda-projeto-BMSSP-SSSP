@@ -58,22 +58,18 @@ public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, Block
         NodeDistCoords median = IntroSelect.select(this, (size()-1)/2);
 
         Block newBlock = new Block(blockSize, upperBound);
-        NodeDist newUpperBound = new NodeDist(new Node(Integer.MIN_VALUE), Long.MIN_VALUE, Integer.MAX_VALUE, null);
         
         BlockNode aux = head;
         while(aux != null){
-            if(aux.value.compareTo(median) < 0){
+            if(aux.value.compareTo(median) <= 0){
                 newBlock.addFirst(aux.value);
-                if(newUpperBound.compareTo(aux.value.nodeDist) < 0){
-                    newUpperBound = aux.value.nodeDist;
-                }
                 remove(aux);
             }
 
             aux = aux.next;
         }
 
-        newBlock.upperBound = newUpperBound;
+        newBlock.upperBound = median.nodeDist;
         return newBlock;
     }
 

@@ -24,7 +24,7 @@ public class NodeDist implements Comparable<NodeDist> {
 
     @Override
     public String toString() {
-        return "NodeDist [node=" + node.id + ", dist=" + dist + "]";
+        return "NodeDist [node=" + (node == null ? -1 : node.id) + ", dist=" + dist + "]";
     }
 
     @Override

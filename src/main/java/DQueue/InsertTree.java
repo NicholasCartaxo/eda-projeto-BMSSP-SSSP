@@ -45,7 +45,7 @@ class InsertTree implements BlockCollection{
             for(NodeDistCoords element : block){
                 ret.add(element);
             }
-            if(ret.size() >= blockSize) break;
+            if(ret.size() > blockSize) break;
         }
         return ret;
     }

@@ -1,7 +1,6 @@
 package main.java.DQueue.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import main.java.DQueue.NodeDistCoords;

@@ -17,7 +17,7 @@ class BatchList implements BlockCollection {
     }
 
     public void batchPrepend(HashSet<NodeDistCoords> elements){
-        if(elements.size() < blockSize){
+        if(elements.size() <= blockSize){
             addFirst(elements);
         }
         else{
@@ -29,7 +29,7 @@ class BatchList implements BlockCollection {
         HashSet<NodeDistCoords> ret = new HashSet<NodeDistCoords>();
 
         BatchNode aux = head;
-        while(aux != null && ret.size() < blockSize){
+        while(aux != null && ret.size() <= blockSize){
             for(NodeDistCoords element : aux.value){
                 ret.add(element);
             }
