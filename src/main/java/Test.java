@@ -21,12 +21,6 @@ public class Test {
         for(int i=1;i<=n;i++){
             System.out.println(a.get(i));
         } 
-        /*
-        System.out.println(InsertTree.nilNode.value);
-        System.out.println(InsertTree.nilNode.color);
-        System.out.println(InsertTree.nilNode.parent);
-        System.out.println(InsertTree.nilNode.left);
-        System.out.println(InsertTree.nilNode.right);
-         */
+
     }
 }
