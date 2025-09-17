@@ -51,6 +51,8 @@ public class NodeDist implements Comparable<NodeDist> {
 
     @Override
     public int compareTo(NodeDist o) {
+        if(this == o) return 0;
+
         if(dist != o.dist){
             return Long.compare(dist, o.dist);
         }
@@ -67,6 +69,8 @@ public class NodeDist implements Comparable<NodeDist> {
         NodeDist currentOther = o;
 
         while (currentThis != null && currentOther != null) {
+            if(currentThis == currentOther) return 0;
+
             int nodeComparison = Objects.compare(
                 currentThis.node, 
                 currentOther.node, 
