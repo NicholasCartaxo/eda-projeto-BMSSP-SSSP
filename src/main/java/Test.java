@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import main.java.commom.graph.Graph;
+import main.java.commom.graph.Node;
 
 public class Test {
     public static void main(String[] args) throws Exception{
@@ -24,11 +25,30 @@ public class Test {
             g.addEdge(u, v, w);
         }
 
+        Node origin = g.nodesById.get(1);
+
+        Dijkstra d = new Dijkstra();
         BMSSP b = new BMSSP();
-        HashMap<Integer,Long> a = b.solve(g, g.nodesById.get(1));
+
+        long start, end;
+
+        start = System.nanoTime();
+        HashMap<Integer,Long> dS = d.solve(g, origin);
+        end = System.nanoTime();
+
+        System.out.println("dijkstra: " + (end - start)/1000000);
+
+        start = System.nanoTime();
+        HashMap<Integer,Long> bS = b.solve(g, origin);
+        end = System.nanoTime();
+
+        System.out.println("bmssp: " + (end - start)/1000000);
+
+        /*
         for(int i=1;i<=n;i++){
-            System.out.println(a.get(i));
+            System.out.println(dS.get(i));
         } 
+        */
 
     }
 }
