@@ -3,39 +3,38 @@ package main.java.DQueue.util;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import main.java.DQueue.NodeDistStored;
+import main.java.DQueue.NodeDistCoords;
 
 
 public class IntroSelect {
 
-    public static NodeDistStored select(Iterable<NodeDistStored> elements, int index){
-    
-        LinkedList<ArrayList<NodeDistStored>> groups = new LinkedList<ArrayList<NodeDistStored>>();
+    public static NodeDistCoords select(Iterable<NodeDistCoords> elements, int index){
+        LinkedList<ArrayList<NodeDistCoords>> groups = new LinkedList<ArrayList<NodeDistCoords>>();
 
-        for(NodeDistStored element : elements){
+        for(NodeDistCoords element : elements){
             if(groups.isEmpty() || groups.getLast().size() == 5){
-                groups.addLast(new ArrayList<NodeDistStored>());
+                groups.addLast(new ArrayList<NodeDistCoords>());
             }
             groups.getLast().add(element);
         }
 
-        LinkedList<NodeDistStored> medians = new LinkedList<NodeDistStored>();
-        for(ArrayList<NodeDistStored> group : groups){
+        LinkedList<NodeDistCoords> medians = new LinkedList<NodeDistCoords>();
+        for(ArrayList<NodeDistCoords> group : groups){
             group.sort(null);
             int medianIndex = ((group.size()-1)/2);
             medians.add(group.get(medianIndex));
         }
 
-        NodeDistStored medianOfMedians;
+        NodeDistCoords medianOfMedians;
         if(medians.size() == 1){
             medianOfMedians = medians.getFirst();
         }else{
             medianOfMedians = select(medians,(medians.size()-1)/2);
         }
 
-        LinkedList<NodeDistStored> left = new LinkedList<NodeDistStored>();
-        LinkedList<NodeDistStored> right = new LinkedList<NodeDistStored>();
-        for(NodeDistStored element : elements){
+        LinkedList<NodeDistCoords> left = new LinkedList<NodeDistCoords>();
+        LinkedList<NodeDistCoords> right = new LinkedList<NodeDistCoords>();
+        for(NodeDistCoords element : elements){
             if(element.compareTo(medianOfMedians) <= 0) left.add(element);
             else right.add(element);
         }
@@ -45,7 +44,6 @@ public class IntroSelect {
         left.remove(medianOfMedians);
         if(index < medianOfMediansIndex) return select(left,index);
         return select(right, index-medianOfMediansIndex-1);
-
     }
 
 }

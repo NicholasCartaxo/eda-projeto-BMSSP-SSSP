@@ -1,12 +1,12 @@
 package main.java.DQueue.Block;
 
-import main.java.DQueue.NodeDistStored;
+import main.java.DQueue.NodeDistCoords;
 
 public class BlockNode{
     public BlockNode next,prev;
-    public final NodeDistStored value;
+    public final NodeDistCoords value;
 
-    public BlockNode(NodeDistStored value){
+    public BlockNode(NodeDistCoords value){
         this.value = value;
     }
 }

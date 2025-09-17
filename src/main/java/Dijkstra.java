@@ -9,17 +9,17 @@ import main.java.commom.graph.Node;
 
 public class Dijkstra {
    
-   private HashMap<Node, Double> dists;
+   private HashMap<Node, NodeDist> dists;
    private HashMap<Node, Boolean> isNodeComplete;
    
    private void dijkstra(Node pivot) {
       PriorityQueue<NodeDist> queue = new PriorityQueue<NodeDist>();
-      queue.add(new NodeDist(pivot, dists.get(pivot)));
+      queue.add(dists.get(pivot));
       
       while(!queue.isEmpty()){
          NodeDist currentNodeDist = queue.remove();
          Node currentNode = currentNodeDist.node;
-         double currentDist = currentNodeDist.dist;
+         long currentDist = currentNodeDist.dist;
 
          isNodeComplete.put(currentNode, true);
 
@@ -27,8 +27,8 @@ public class Dijkstra {
             if(isNodeComplete.get(edge.nodeTo)) continue;
             
             Node nodeTo = edge.nodeTo;
-            double newDist = currentDist + edge.weight;
-            if(newDist < dists.get(nodeTo)){
+            NodeDist newDist = currentNodeDist.addEdge(edge);
+            if(newDist.compareTo(dists.get(nodeTo)) < 0){
                dists.put(nodeTo, newDist);
 
             }  

@@ -16,8 +16,8 @@ class BatchList implements BlockCollection {
         this.blockSize = blockSize;
     }
 
-    public void batchPrepend(HashSet<NodeDistStored> elements){
-        if(elements.size() < blockSize){
+    public void batchPrepend(HashSet<NodeDistCoords> elements){
+        if(elements.size() <= blockSize){
             addFirst(elements);
         }
         else{
@@ -25,12 +25,12 @@ class BatchList implements BlockCollection {
         }
     }
 
-    public HashSet<NodeDistStored> pull(){
-        HashSet<NodeDistStored> ret = new HashSet<NodeDistStored>();
+    public HashSet<NodeDistCoords> pull(){
+        HashSet<NodeDistCoords> ret = new HashSet<NodeDistCoords>();
 
         BatchNode aux = head;
-        while(aux != null && ret.size() < blockSize){
-            for(NodeDistStored element : aux.value){
+        while(aux != null && ret.size() <= blockSize){
+            for(NodeDistCoords element : aux.value){
                 ret.add(element);
             }
             aux = aux.next;
@@ -51,10 +51,11 @@ class BatchList implements BlockCollection {
         return head == null;
     }
 
-    private void addFirst(HashSet<NodeDistStored> elements) {
-        BatchNode n = new BatchNode(new Block(blockSize, 0.0));
+    private void addFirst(HashSet<NodeDistCoords> elements) {
+
+        BatchNode n = new BatchNode(new Block(blockSize));
         
-        for(NodeDistStored element : elements){
+        for(NodeDistCoords element : elements){
             element.blockContainer = n;
             n.value.addFirst(element);
         }
@@ -68,18 +69,18 @@ class BatchList implements BlockCollection {
         }
     }
 
-    private void addPartitioned(HashSet<NodeDistStored> elements){
+    private void addPartitioned(HashSet<NodeDistCoords> elements){
         if(elements.size() <= (blockSize+1)/2){
             addFirst(elements);
             return;
         }
 
-        NodeDistStored median = IntroSelect.select(elements, (elements.size()-1)/2);
+        NodeDistCoords median = IntroSelect.select(elements, (elements.size()-1)/2);
 
-        HashSet<NodeDistStored> left = new HashSet<NodeDistStored>();
-        HashSet<NodeDistStored> right = new HashSet<NodeDistStored>();
+        HashSet<NodeDistCoords> left = new HashSet<NodeDistCoords>();
+        HashSet<NodeDistCoords> right = new HashSet<NodeDistCoords>();
 
-        for(NodeDistStored element : elements){
+        for(NodeDistCoords element : elements){
             if(element.compareTo(median) <= 0){
                 left.add(element);
             }else{

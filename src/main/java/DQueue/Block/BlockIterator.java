@@ -2,9 +2,9 @@ package main.java.DQueue.Block;
 
 import java.util.Iterator;
 
-import main.java.DQueue.NodeDistStored;
+import main.java.DQueue.NodeDistCoords;
 
-public class BlockIterator implements Iterator<NodeDistStored> {
+public class BlockIterator implements Iterator<NodeDistCoords> {
 
     private BlockNode curr;
 
@@ -18,8 +18,8 @@ public class BlockIterator implements Iterator<NodeDistStored> {
     }
 
     @Override
-    public NodeDistStored next() {
-        NodeDistStored ret = curr.value;
+    public NodeDistCoords next() {
+        NodeDistCoords ret = curr.value;
         curr = curr.next;
         return ret;
     }

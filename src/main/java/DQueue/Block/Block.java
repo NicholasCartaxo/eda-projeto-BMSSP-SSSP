@@ -2,20 +2,26 @@ package main.java.DQueue.Block;
 
 import java.util.Iterator;
 
-import main.java.DQueue.NodeDistStored;
+import main.java.DQueue.NodeDistCoords;
 import main.java.DQueue.util.IntroSelect;
+import main.java.commom.dataStructures.NodeDist;
+import main.java.commom.graph.Node;
 
-public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
+public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, BlockContainer {
     private final int blockSize;
-    public double upperBound;
+    public NodeDist upperBound;
 
     private BlockNode head;
     private int size;
     
-    public Block(int blockSize, double upperBound){
+    public Block(int blockSize, NodeDist upperBound){
         this.blockSize = blockSize;
         this.upperBound = upperBound;
         size = 0;
+    }
+
+    public Block(int blockSize){
+        this(blockSize, null);
     }
 
     public boolean isEmpty(){
@@ -26,7 +32,7 @@ public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
         return size() > blockSize;
     }
 
-    public void addFirst(NodeDistStored value){
+    public void addFirst(NodeDistCoords value){
         BlockNode n = new BlockNode(value);
         value.blockNode = n;
         
@@ -49,23 +55,21 @@ public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
     }
 
     public Block split(){
-        NodeDistStored median = IntroSelect.select(this, (size()-1)/2);
+        NodeDistCoords median = IntroSelect.select(this, (size()-1)/2);
 
         Block newBlock = new Block(blockSize, upperBound);
-        double newUpperBound = -1;
         
         BlockNode aux = head;
         while(aux != null){
             if(aux.value.compareTo(median) <= 0){
                 newBlock.addFirst(aux.value);
-                newUpperBound = Math.max(newUpperBound,aux.value.dist);
                 remove(aux);
             }
 
             aux = aux.next;
         }
 
-        newBlock.upperBound = newUpperBound;
+        newBlock.upperBound = median.nodeDist;
         return newBlock;
     }
 
@@ -74,17 +78,22 @@ public class Block implements Iterable<NodeDistStored>, Comparable<Block> {
     }
 
     @Override
-    public Iterator<NodeDistStored> iterator() {
+    public Iterator<NodeDistCoords> iterator() {
         return new BlockIterator(this);
     }
     
     @Override
     public int compareTo(Block o) {
-        return Double.valueOf(upperBound).compareTo(Double.valueOf(o.upperBound));
+        return upperBound.compareTo(o.upperBound);
     }
 
     public int size(){
         return size;
+    }
+
+    @Override
+    public void delete(BlockNode element) {
+        remove(element);
     }
 
 }
