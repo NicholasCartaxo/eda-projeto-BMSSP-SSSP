@@ -1,4 +1,3 @@
-./Coisa.java
 ./src/main/java/BMSSP.java
 ./src/main/java/commom/dataStructures/NodeDist.java
 ./src/main/java/commom/dataStructures/Pair.java
