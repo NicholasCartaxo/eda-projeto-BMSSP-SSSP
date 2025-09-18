@@ -1,7 +1,5 @@
 package main.java.commom.dataStructures;
 
-import java.util.Objects;
-
 import main.java.commom.graph.Edge;
 import main.java.commom.graph.Node;
 
@@ -50,7 +48,7 @@ public class NodeDist implements Comparable<NodeDist> {
     }
 
     @Override
-    public int compareTo(NodeDist o) {
+    public int compareTo(NodeDist o){
         if(this == o) return 0;
 
         if(dist != o.dist){
@@ -60,25 +58,14 @@ public class NodeDist implements Comparable<NodeDist> {
         if(numNodes != o.numNodes){
             return Integer.compare(numNodes, o.numNodes);
         }
-
-        return compareNode(o);
-    }
-    
-    private int compareNode(NodeDist o){
+        
         NodeDist currentThis = this;
         NodeDist currentOther = o;
-
         while (currentThis != null && currentOther != null) {
             if(currentThis == currentOther) return 0;
 
-            int nodeComparison = Objects.compare(
-                currentThis.node, 
-                currentOther.node, 
-                java.util.Comparator.nullsFirst(Node::compareTo)
-            );
-
-            if (nodeComparison != 0) {
-                return nodeComparison;
+            if(currentThis.node.id != currentOther.node.id){
+                return currentThis.node.compareTo(currentOther.node);
             }
 
             currentThis = currentThis.prev;
@@ -87,13 +74,10 @@ public class NodeDist implements Comparable<NodeDist> {
 
         if (currentThis == null && currentOther != null) {
             return -1;
-        }
-        if (currentThis != null && currentOther == null) {
+        }else{
             return 1;
         }
-        
-        return 0;
-    }
 
+    }
     
 }

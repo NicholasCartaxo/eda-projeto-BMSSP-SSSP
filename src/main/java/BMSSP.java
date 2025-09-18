@@ -65,16 +65,12 @@ public class BMSSP {
         int blockSize = (int)Math.pow(2,(level-1)*t);
         DQueue dQueue = new DQueue(blockSize, upperBound);
         
-        NodeDist currentUpperBound = INFINITY_NODEDIST;
+        NodeDist currentUpperBound = upperBound;
         for(Node pivot : pivots){
             if(currentUpperBound.compareTo(dists.get(pivot)) > 0){
                 currentUpperBound = dists.get(pivot);
             }
             dQueue.insert(dists.get(pivot));
-        }
-
-        if(pivots.isEmpty()){
-            currentUpperBound = upperBound;
         }
 
         HashSet<Node> newCompleteNodes = new HashSet<Node>();
@@ -196,7 +192,7 @@ public class BMSSP {
             prevNodes = currentNodes;
 
             if (completeNodes.size() > k * border.size()) {
-                return new Pair<HashSet<Node>,HashSet<Node>>(new HashSet<Node>(border), completeNodes);
+                return new Pair<HashSet<Node>,HashSet<Node>>(border, completeNodes);
             }
         }
 
