@@ -44,11 +44,9 @@ public class Test {
 
         System.out.println("bmssp: " + (end - start)/1000000);
 
-        /*
         for(int i=1;i<=n;i++){
-            System.out.println(dS.get(i));
+            if(!dS.get(i).equals(bS.get(i))) System.out.println("INCORRECT FOR " + i);
         } 
-        */
 
     }
 }

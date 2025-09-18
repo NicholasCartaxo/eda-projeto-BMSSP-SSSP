@@ -2,6 +2,7 @@ package main.java;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -17,8 +18,6 @@ public class BMSSP {
     private static final long INFINITY = 100000000000000000L;
     private static final NodeDist INFINITY_NODEDIST = new NodeDist(null, INFINITY, 0, null);
     
-
-    private Graph graph;
     private HashMap<Node, NodeDist> dists;
     private long k;
     private long t;
@@ -28,7 +27,6 @@ public class BMSSP {
     }
 
     public HashMap<Integer, Long> solve(Graph graph, Node origin){
-        this.graph = graph;
         dists = new HashMap<Node, NodeDist>();
 
         for(Node node : graph.nodesById.values()){
@@ -202,54 +200,41 @@ public class BMSSP {
             }
         }
 
-        Graph pivotForest = buildForest(completeNodes);
-        HashSet<Node> pivots = getPivots(pivotForest,border);
+        HashSet<Node> pivots = getPivots(completeNodes,border);
         
         return new Pair<HashSet<Node>,HashSet<Node>>(pivots, completeNodes);   
     }
 
-    private Graph buildForest(HashSet<Node> nodes){
-        Graph forest = new Graph();
+    private HashSet<Node> getPivots(HashSet<Node> nodes, HashSet<Node> border){
+
+        HashMap<Node,LinkedList<Node>> adjacentInForest = new HashMap<Node,LinkedList<Node>>();
 
         for(Node node : nodes){
-            for(Edge edge : node.outEdges){
-                Node nodeTo = edge.nodeTo;
+            Node nodeFrom = dists.get(node).prev.node;
+            if(!nodes.contains(nodeFrom)) continue;
 
-                if(dists.get(node).addEdge(edge).compareTo(dists.get(nodeTo)) == 0){
-                    forest.addEdge(node.id, nodeTo.id, 1);
-                }
-            }
-        }
-
-        return forest;
-    }
-
-    private HashSet<Node> getPivots(Graph forest, HashSet<Node> border){
-        HashSet<Node> roots = new HashSet<Node>(forest.nodesById.values());
-
-        for(Node node : forest.nodesById.values()){
-            for(Edge edge : node.outEdges){
-                roots.remove(edge.nodeTo);
-            }
+            adjacentInForest.putIfAbsent(nodeFrom, new LinkedList<Node>());
+            adjacentInForest.get(nodeFrom).add(node);
         }
 
         HashSet<Node> pivots = new HashSet<Node>();
-        for(Node root : roots){
-            if(countTreeSize(root) >= k){
-                Node pivot = graph.nodesById.get(root.id);
-                if(border.contains(pivot)){
-                    pivots.add(pivot);
-                }
+        for(Node root : border){
+            if(nodes.contains(dists.get(root).prev.node) || !adjacentInForest.containsKey(root)) continue;
+            if(countTreeSize(root, adjacentInForest) >= k){
+                pivots.add(root);
             }
         }
 
         return pivots;
     }
 
-    private int countTreeSize(Node root) {
+    private int countTreeSize(Node root, HashMap<Node,LinkedList<Node>> adjacentInForest) {
         int count = 1;
-        for (Edge edge : root.outEdges) {
-            count += countTreeSize(edge.nodeTo);
+        LinkedList<Node> adjacent = adjacentInForest.get(root);
+        if(adjacent == null) return count;
+
+        for (Node node : adjacent) {
+            count += countTreeSize(node, adjacentInForest);
         }
         return count;
     }
