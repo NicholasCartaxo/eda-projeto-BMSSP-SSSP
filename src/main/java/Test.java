@@ -15,6 +15,8 @@ public class Test {
         int n = Integer.parseInt(firstLine[0]);
         int m = Integer.parseInt(firstLine[1]);
 
+        int maxIn = 0;
+        int maxOut = 0;
         Graph g = new Graph();
         for (int i = 0; i < m; i++) {
             String[] edgeData = br.readLine().split(" ");
@@ -23,8 +25,13 @@ public class Test {
             int w = Integer.parseInt(edgeData[2]);
             
             g.addEdge(u, v, w);
-        }
+            g.nodesById.get(v).inDegree++;
+            g.nodesById.get(u).outDegree++;
 
+            maxIn = Math.max(maxIn, g.nodesById.get(v).inDegree);
+            maxOut = Math.max(maxOut, g.nodesById.get(u).outDegree);
+        }
+        System.out.printf("in: %d, out: %d\n",maxIn,maxOut);
         Node origin = g.nodesById.get(1);
 
         Dijkstra d = new Dijkstra();
