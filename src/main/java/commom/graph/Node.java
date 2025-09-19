@@ -7,6 +7,7 @@ public class Node implements Comparable<Node> {
     
     public final int id;
     public List<Edge> outEdges;
+    public int inDegree, outDegree;
 
     public Node(int id){
         this.id = id;

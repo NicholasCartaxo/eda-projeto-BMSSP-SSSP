@@ -16,7 +16,8 @@ import main.java.DQueue.DQueue;
 public class BMSSP {
 
     private static final long INFINITY = 100000000000000000L;
-    private static final NodeDist INFINITY_NODEDIST = new NodeDist(null, INFINITY, 0, null);
+    private static final Node INFINITY_NODE = new Node(Integer.MIN_VALUE);
+    private static final NodeDist INFINITY_NODEDIST = new NodeDist(INFINITY_NODE, INFINITY, null);
     
     private HashMap<Node, NodeDist> dists;
     private long k;
@@ -32,7 +33,7 @@ public class BMSSP {
         for(Node node : graph.nodesById.values()){
             dists.put(node, INFINITY_NODEDIST);
         }
-        dists.put(origin,new NodeDist(origin, 0, 1, null));
+        dists.put(origin,new NodeDist(origin, 0, null));
 
         k = (long)Math.floor(Math.pow(log2(graph.numNodes), 1.0/3.0));
         t = (long)Math.floor(Math.pow(log2(graph.numNodes), 2.0/3.0));

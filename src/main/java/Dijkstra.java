@@ -12,7 +12,7 @@ import main.java.commom.graph.Node;
 public class Dijkstra {
    
    private static final long INFINITY = 100000000000000000L;
-   private static final NodeDist INFINITY_NODEDIST = new NodeDist(null, INFINITY, 0, null);
+   private static final NodeDist INFINITY_NODEDIST = new NodeDist(null, INFINITY, null);
 
    private HashMap<Node, NodeDist> dists;
    private HashMap<Node, Boolean> isNodeComplete;
@@ -25,7 +25,7 @@ public class Dijkstra {
             dists.put(node, INFINITY_NODEDIST);
             isNodeComplete.put(node, false);
         }
-        dists.put(origin,new NodeDist(origin, 0, 1, null));
+        dists.put(origin,new NodeDist(origin, 0, null));
 
         dijkstra(origin);
 
@@ -58,7 +58,7 @@ public class Dijkstra {
             
             Node nodeTo = edge.nodeTo;
             NodeDist newDist = currentNodeDist.addEdge(edge);
-            if(newDist.compareTo(dists.get(nodeTo)) < 0){
+            if(newDist.dist < dists.get(nodeTo).dist){
                dists.put(nodeTo, newDist);
                queue.add(newDist);
             }  
