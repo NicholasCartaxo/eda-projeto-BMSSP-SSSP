@@ -20,7 +20,7 @@ class InsertTree implements BlockCollection{
         this.upperBound = upperBound;
 
         blockTree = new TreeMap<NodeDist,Block>();
-        insertBlock(new Block(this.blockSize,this.upperBound));
+        insertBlock(new Block(this.blockSize,this.upperBound, this));
     }
 
     public void insertElement(NodeDistCoords element) {

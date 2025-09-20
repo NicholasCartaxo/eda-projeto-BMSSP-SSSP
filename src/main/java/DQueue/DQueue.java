@@ -32,7 +32,6 @@ public class DQueue {
         NodeDistCoords elementToAdd = elementToAdd(element);
         
         if(elementToAdd != null){
-            elementToAdd.blockCollection = insertTree;
             insertTree.insertElement(elementToAdd);
         }
     }
@@ -43,7 +42,6 @@ public class DQueue {
         for(NodeDist element : elements){
             NodeDistCoords elementToAdd = elementToAdd(element);
             if(elementToAdd != null){
-                elementToAdd.blockCollection = batchList;
                 elementsToAdd.add(elementToAdd);
             }
         }
@@ -106,7 +104,7 @@ public class DQueue {
 
         element.blockContainer.delete(element.blockNode);
         if(element.blockContainer.isEmpty()){
-            element.blockCollection.delete(element.blockContainer);
+            element.blockContainer.blockCollection().delete(element.blockContainer);
         }
     }
 

@@ -53,7 +53,7 @@ class BatchList implements BlockCollection {
 
     private void addFirst(HashSet<NodeDistCoords> elements) {
 
-        BatchNode n = new BatchNode(new Block(blockSize));
+        BatchNode n = new BatchNode(new Block(blockSize, this));
         
         for(NodeDistCoords element : elements){
             element.blockContainer = n;
@@ -112,6 +112,11 @@ class BatchNode implements BlockContainer {
     @Override
     public boolean isEmpty() {
         return value.isEmpty();
+    }
+
+    @Override
+    public BlockCollection blockCollection() {
+        return value.blockCollection;
     }
 
 }

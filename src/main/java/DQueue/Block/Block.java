@@ -9,18 +9,20 @@ import main.java.commom.graph.NodeDist;
 public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, BlockContainer {
     private final int blockSize;
     public NodeDist upperBound;
+    public final BlockCollection blockCollection;
 
     private BlockNode head;
     private int size;
     
-    public Block(int blockSize, NodeDist upperBound){
+    public Block(int blockSize, NodeDist upperBound, BlockCollection blockCollection){
         this.blockSize = blockSize;
         this.upperBound = upperBound;
+        this.blockCollection = blockCollection;
         size = 0;
     }
 
-    public Block(int blockSize){
-        this(blockSize, null);
+    public Block(int blockSize, BlockCollection blockCollection){
+        this(blockSize, null, blockCollection);
     }
 
     public boolean isEmpty(){
@@ -56,7 +58,7 @@ public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, Block
     public Block split(){
         NodeDistCoords median = IntroSelect.select(this, (size()-1)/2);
 
-        Block newBlock = new Block(blockSize, upperBound);
+        Block newBlock = new Block(blockSize, upperBound, blockCollection);
 
         BlockNode aux = head;
         while(aux != null){
@@ -89,6 +91,11 @@ public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, Block
     @Override
     public void delete(BlockNode element) {
         remove(element);
+    }
+
+    @Override
+    public BlockCollection blockCollection() {
+        return blockCollection;
     }
 
 }
