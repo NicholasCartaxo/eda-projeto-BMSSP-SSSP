@@ -81,7 +81,7 @@ public class BMSSP {
             NodeDist prevUpperBound = prevBoundSet.first;
             HashSet<Node> prevNodes = prevBoundSet.second;
 
-            Pair<NodeDist,HashSet<Node>> currentBoundSet = bmssp(level-1,prevUpperBound,prevNodes);
+            Pair<NodeDist,HashSet<Node>> currentBoundSet = level == 1 ? baseCase(prevUpperBound, prevNodes) : bmssp(level-1,prevUpperBound,prevNodes);
             currentUpperBound = currentBoundSet.first;
             HashSet<Node> currentNodes = currentBoundSet.second;
 
@@ -198,7 +198,7 @@ public class BMSSP {
         }
 
         HashSet<Node> pivots = getPivots(completeNodes,border);
-        
+
         return new Pair<HashSet<Node>,HashSet<Node>>(pivots, completeNodes);   
     }
 
@@ -216,7 +216,7 @@ public class BMSSP {
 
         HashSet<Node> pivots = new HashSet<Node>();
         for(Node root : border){
-            if(nodes.contains(dists.get(root).prev.node) || !adjacentInForest.containsKey(root)) continue;
+            if(nodes.contains(dists.get(root).prev.node)) continue;
             if(countTreeSize(root, adjacentInForest) >= k){
                 pivots.add(root);
             }
