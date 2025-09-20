@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import main.java.DQueue.NodeDistCoords;
 import main.java.DQueue.util.IntroSelect;
-import main.java.commom.dataStructures.NodeDist;
+import main.java.commom.graph.NodeDist;
 
 public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, BlockContainer {
     private final int blockSize;

@@ -1,11 +1,11 @@
 import random
 
 # --- Configuration ---
-NUM_NODES = 10_000_000
+NUM_NODES = 1_000_000
 # A sparse graph has |E| on the order of |V|. We'll use 2 * |V|.
-NUM_EDGES = 20_000_000
+NUM_EDGES = 2_000_000
 MAX_WEIGHT = 100000
-OUTPUT_FILE = "1e7_sparse_graph.txt"
+OUTPUT_FILE = "1e6_sparse_graph.txt"
 
 print(f"Generating a 1-indexed sparse graph with {NUM_NODES} nodes and {NUM_EDGES} edges...")
 

@@ -2,10 +2,8 @@ package main.java;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 
 import main.java.commom.graph.Graph;
-import main.java.commom.graph.Node;
 
 public class Test {
     public static void main(String[] args) throws Exception{
@@ -15,44 +13,32 @@ public class Test {
         int n = Integer.parseInt(firstLine[0]);
         int m = Integer.parseInt(firstLine[1]);
 
-        int maxIn = 0;
-        int maxOut = 0;
-        Graph g = new Graph();
+        Graph g = new Graph(n);
         for (int i = 0; i < m; i++) {
             String[] edgeData = br.readLine().split(" ");
-            int u = Integer.parseInt(edgeData[0]);
-            int v = Integer.parseInt(edgeData[1]);
+            int u = Integer.parseInt(edgeData[0])-1;
+            int v = Integer.parseInt(edgeData[1])-1;
             int w = Integer.parseInt(edgeData[2]);
             
             g.addEdge(u, v, w);
-            g.nodesById.get(v).inDegree++;
-            g.nodesById.get(u).outDegree++;
-
-            maxIn = Math.max(maxIn, g.nodesById.get(v).inDegree);
-            maxOut = Math.max(maxOut, g.nodesById.get(u).outDegree);
         }
-        System.out.printf("in: %d, out: %d\n",maxIn,maxOut);
-        Node origin = g.nodesById.get(1);
-
-        Dijkstra d = new Dijkstra();
-        BMSSP b = new BMSSP();
 
         long start, end;
 
         start = System.nanoTime();
-        HashMap<Integer,Long> dS = d.solve(g, origin);
+        long[] dS = Dijkstra.solve(g, 0);
         end = System.nanoTime();
 
         System.out.println("dijkstra: " + (end - start)/1000000);
 
         start = System.nanoTime();
-        HashMap<Integer,Long> bS = b.solve(g, origin);
+        long[] bS = BMSSP.solve(g, 0);
         end = System.nanoTime();
 
         System.out.println("bmssp: " + (end - start)/1000000);
 
-        for(int i=1;i<=n;i++){
-            if(!dS.get(i).equals(bS.get(i))) System.out.println("INCORRECT FOR " + i);
+        for(int i=0;i<n;i++){
+            if(dS[i] != bS[i]) System.out.println("INCORRECT FOR " + i);
         } 
 
     }

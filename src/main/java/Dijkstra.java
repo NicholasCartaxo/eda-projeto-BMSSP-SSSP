@@ -1,66 +1,62 @@
 package main.java;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-import main.java.commom.dataStructures.NodeDist;
-import main.java.commom.graph.Edge;
+import main.java.commom.dataStructures.Pair;
 import main.java.commom.graph.Graph;
-import main.java.commom.graph.Node;
+import main.java.commom.graph.NodeDist;
 
 public class Dijkstra {
    
    private static final long INFINITY = 100000000000000000L;
-   private static final NodeDist INFINITY_NODEDIST = new NodeDist(null, INFINITY, null);
 
-   private HashMap<Node, NodeDist> dists;
-   private HashMap<Node, Boolean> isNodeComplete;
+    private static LinkedList<Pair<Integer,Long>>[] adjacent;
+    private static long[] dists;
+    private static int[] parents;
+    private static boolean[] visited;
    
-   public HashMap<Integer, Long> solve(Graph graph, Node origin){
-        dists = new HashMap<Node, NodeDist>();
-        isNodeComplete = new HashMap<Node, Boolean>();
+   public static long[] solve(Graph graph, int origin){
+         
+      adjacent = graph.adjacent;
+      dists = new long[graph.numNodes];
+      parents = new int[graph.numNodes];
+      visited = new boolean[graph.numNodes];
 
-        for(Node node : graph.nodesById.values()){
-            dists.put(node, INFINITY_NODEDIST);
-            isNodeComplete.put(node, false);
-        }
-        dists.put(origin,new NodeDist(origin, 0, null));
+      for(int i=0;i<graph.numNodes;i++){
+         dists[i] = INFINITY;
+         parents[i] = -1;
+         visited[i] = false;
+      }
+      dists[origin] = 0;
+      dijkstra(origin);
 
-        dijkstra(origin);
-
-        HashMap<Integer,Long> idDists = new HashMap<Integer,Long>();
-        for(Map.Entry<Node,NodeDist> distPair : dists.entrySet()){
-            int id = distPair.getKey().id;
-            long dist = distPair.getValue().dist;
-            idDists.put(id,dist);
-        }
-
-        return idDists;
+      return dists;
     }
 
-   private void dijkstra(Node pivot) {
+   private static void dijkstra(int origin) {
       PriorityQueue<NodeDist> queue = new PriorityQueue<NodeDist>();
-      queue.add(dists.get(pivot));
+      queue.add(new NodeDist(origin, dists[origin]));
       
       while(!queue.isEmpty()){
          NodeDist currentNodeDist = queue.remove();
-         Node currentNode = currentNodeDist.node;
+         int currentNode = currentNodeDist.node;
+         long currentDist = currentNodeDist.dist;
 
-         if (isNodeComplete.get(currentNode)) {
-            continue;
-        }
+         if (visited[currentNode]) continue;
 
-         isNodeComplete.put(currentNode, true);
+         visited[currentNode] = true;
 
-         for(Edge edge: currentNode.outEdges){
-            if(isNodeComplete.get(edge.nodeTo)) continue;
+         for(Pair<Integer,Long> edge: adjacent[currentNode]){
+            int nodeTo = edge.first;
+            long weight = edge.second;
+            if(visited[nodeTo]) continue;
             
-            Node nodeTo = edge.nodeTo;
-            NodeDist newDist = currentNodeDist.addEdge(edge);
-            if(newDist.dist < dists.get(nodeTo).dist){
-               dists.put(nodeTo, newDist);
-               queue.add(newDist);
+            long newDist = currentDist + weight;
+            if(newDist < dists[nodeTo]){
+               dists[nodeTo] = newDist;
+               parents[nodeTo] = currentNode;
+               queue.add(new NodeDist(nodeTo, newDist));
             }  
          }
       }

@@ -1,36 +1,24 @@
 package main.java.commom.graph;
 
-import java.util.HashMap;
+import java.util.LinkedList;
+
+import main.java.commom.dataStructures.Pair;
 
 public class Graph {
-    public int numNodes;
-    public int numEdges;
+    public final int numNodes;
+    public final LinkedList<Pair<Integer,Long>> adjacent[];
 
-    public HashMap<Integer,Node> nodesById;
-
-    public Graph(){
-        numNodes = 0;
-        numEdges = 0;
-        nodesById = new HashMap<Integer,Node>();
-    }
-
-    public void addNode(int id){
-        nodesById.put(id,new Node(id));
-        numNodes++;
+    @SuppressWarnings("unchecked")
+    public Graph(int numNodes){
+        this.numNodes = numNodes;
+        adjacent = new LinkedList[this.numNodes];
+        for(int i=0;i<numNodes;i++){
+            adjacent[i] = new LinkedList<Pair<Integer,Long>>();
+        }
     }
 
     public void addEdge(int idFrom, int idTo, long weight){
-        if(!nodesById.containsKey(idFrom)){
-            addNode(idFrom);
-        }
-        if(!nodesById.containsKey(idTo)){
-            addNode(idTo);
-        }
-        Node nodeFrom = nodesById.get(idFrom);
-        Node nodeTo = nodesById.get(idTo);
-
-        numEdges++;
-        nodeFrom.addEdge(new Edge(nodeFrom, nodeTo, weight));        
+        adjacent[idFrom].add(new Pair<Integer,Long>(idTo,weight));     
     }
 
 }

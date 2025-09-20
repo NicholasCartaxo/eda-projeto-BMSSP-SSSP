@@ -1,3 +1,2 @@
-in: 9, out: 8
-dijkstra: 121
-bmssp: 726
+dijkstra: 1040
+bmssp: 3550

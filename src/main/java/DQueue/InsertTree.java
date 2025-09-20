@@ -6,7 +6,7 @@ import java.util.TreeMap;
 import main.java.DQueue.Block.Block;
 import main.java.DQueue.Block.BlockCollection;
 import main.java.DQueue.Block.BlockContainer;
-import main.java.commom.dataStructures.NodeDist;
+import main.java.commom.graph.NodeDist;
 
 class InsertTree implements BlockCollection{
 

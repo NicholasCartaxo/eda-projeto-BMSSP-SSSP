@@ -2,11 +2,11 @@ package main.java.DQueue;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import main.java.DQueue.util.IntroSelect;
-import main.java.commom.dataStructures.NodeDist;
 import main.java.commom.dataStructures.Pair;
-import main.java.commom.graph.Node;
+import main.java.commom.graph.NodeDist;
 
 public class DQueue {
     
@@ -16,7 +16,7 @@ public class DQueue {
     private BatchList batchList;
     private InsertTree insertTree;
 
-    private HashMap<Node,NodeDistCoords> coordinates;
+    private HashMap<Integer,NodeDistCoords> coordinates;
 
     public DQueue(int blockSize, NodeDist upperBound){
         this.blockSize = blockSize;
@@ -25,7 +25,7 @@ public class DQueue {
         this.batchList = new BatchList(this.blockSize);
         this.insertTree = new InsertTree(this.blockSize, upperBound);
 
-        this.coordinates = new HashMap<Node,NodeDistCoords>();
+        this.coordinates = new HashMap<Integer,NodeDistCoords>();
     }
 
     public void insert(NodeDist element){
@@ -37,7 +37,7 @@ public class DQueue {
         }
     }
 
-    public void batchPrepend(HashSet<NodeDist> elements){
+    public void batchPrepend(LinkedList<NodeDist> elements){
         HashSet<NodeDistCoords> elementsToAdd = new HashSet<NodeDistCoords>();
 
         for(NodeDist element : elements){
@@ -51,13 +51,13 @@ public class DQueue {
         batchList.batchPrepend(elementsToAdd);
     }
 
-    public Pair<NodeDist,HashSet<Node>> pull(){
+    public Pair<NodeDist,LinkedList<Integer>> pull(){
         HashSet<NodeDistCoords> possibleSmallests = new HashSet<NodeDistCoords>();
         
         possibleSmallests.addAll(batchList.pull());
         possibleSmallests.addAll(insertTree.pull());
         
-        HashSet<Node> nodes = new HashSet<Node>();
+        LinkedList<Integer> nodes = new LinkedList<Integer>();
 
         if(possibleSmallests.size() <= blockSize){
             for(NodeDistCoords element : possibleSmallests){
@@ -65,7 +65,7 @@ public class DQueue {
                 delete(element);
             }
 
-            return new Pair<NodeDist,HashSet<Node>>(upperBound, nodes);
+            return new Pair<NodeDist,LinkedList<Integer>>(upperBound, nodes);
         }
 
         NodeDistCoords blockSizeSmallest = IntroSelect.select(possibleSmallests, blockSize-1);
@@ -77,7 +77,7 @@ public class DQueue {
         }
         
         NodeDist upperBoundOfPull = IntroSelect.select(possibleSmallests, blockSize).nodeDist;
-        return new Pair<NodeDist,HashSet<Node>>(upperBoundOfPull, nodes);
+        return new Pair<NodeDist,LinkedList<Integer>>(upperBoundOfPull, nodes);
     }
 
     public boolean isEmpty(){
