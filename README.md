@@ -13,7 +13,7 @@ Esse repositório utiliza o artigo [Breaking the Sorting Barrier for Directed Si
 
   O processo de execução do projeto ocorreu por meio da divisão de tarefas dentro de subgrupos do projeto, com reuniões semanais (sprints) e a especificação dos problemas/soluções para o código. Todas as ferramentas para essa produção acadêmica se deram de maneira consensual entre os participantes, a partir de discussões sobre a revisão do desempenho e da dificuldade no cumprimento das especificações do algoritmo de menor caminho.
   Nesse viés, esse projeto foi ramificado em 3 partes práticas e 2 partes de análise e conclusão, sendo cada uma focada em uma tarefa ou funcionalidade específica. Dentre os  objetivos principais do plano de execução do BMSSP, temos, em ordem de implementação no projeto, o/a: 
-  1. # Prática
+  ## 1. Prática
      
       Criação da estrutura base para a execução do algoritmo, incluindo Árvore PV modificada, FibonacciHeap, DQueue (fila de prioridade) , BatchList (Lista de Lotes de blocos para os nós), etc;
     Implementação do algoritmo de menor caminho BMSP, dividido nos métodos primários:	
@@ -21,7 +21,7 @@ Esse repositório utiliza o artigo [Breaking the Sorting Barrier for Directed Si
       - Base Case();
       - BMSSP();
       - Produção de uma bateria de testes, que simula casos da vida real;
-  2. # Análise
+  ## 2. Análise
       - Criação(Plot) de gráficos para os casos de testes tanto para o BMSSP quanto para o algoritmo de Dijkstra;
       - Análise de comparação entre os dois algoritmos com base nos gráficos gerados, resultando em uma classificação de eficiência;
 
@@ -34,5 +34,4 @@ Esse repositório utiliza o artigo [Breaking the Sorting Barrier for Directed Si
 
 A implementação do algoritmo é dividida em três métodos principais, o BMSSP, o Base Case e o Find Pivots. O BMSSP é o método que faz uso dos outros dois métodos e controla a recursão principal do algoritmo, sendo responsável por dividir o problema central em problemas menores até que o caso base seja alcançado, ou seja, o nível da recursão seja igual a zero. Em cada chamada recursiva, esse método reduz o limite superior de distância (upper bound) para que ele seja igual a distância até o pivô mais próximo encontrado pelo Find Pivots. Além disso, as distâncias para todos os pivôs encontrados são inseridas na DQueue, uma fila adaptada que permite, com uma única consulta, retornar os M menores elementos armazenados de forma eficiente. No laço principal, ele acessa os M menores elementos da DQueue e executa recursivamente o BMSSP, passando como parâmetro o nível de recursão atual decrementado em uma unidade e os M menores elementos acessados. Ao final, ele verifica se as novas distâncias encontradas no nível inferior da recursão são, de fato, as menores até o momento, uma vez que as novas distâncias encontradas podem ser maiores do que as que já estavam armazenadas. Assim, após as menores distâncias encontradas serem armazenadas, o novo upper bound calculado e os novos nós completados na recursão atual são retornados. Isso se repete até que o nível de recursão seja igual a zero. Assim, quando o nível é zero, o Base Case é executado, calculando as distâncias para uma quantidade limitada de nós com base no nó pivô passado como parâmetro e em um upper bound que, nesse caso, é a distância até o pivô em questão. Dessa forma, enquanto o número máximo de nós e iterações não for atingido, esse método calcula a distância para todos os nós ligados ao pivô e, na próxima iteração, calcula a distância para os nós ligados aos novos nós encontrados e assim sucessivamente. O Find Pivots, por sua vez, é o método responsável por encontrar os nós pivôs que serão usados para particionar o problema e reduzir o nível de recursão até que ele seja zero. Enquanto o número de iterações e o número de nós completados não atingir o limite máximo, esse método permanece calculando a menor distância até os nós da fronteira (border). Ao final, se o número de nós completos for maior que o limite definido, toda a fronteira de nós é retornada, caso contrário, o método busca por nós que formam uma árvore no grafo e retorna os nós raízes dessas árvores. Por fim, foi implementado o método solve, que recebe o nó de origem e o grafo onde o algoritmo implementado irá operar. Esse método inicializa as estruturas de dados iniciais, define as distâncias para cada nó com um valor infinito e executa o método BMSSP. 
 
-> [!TIP]
-> Try this out!
+
