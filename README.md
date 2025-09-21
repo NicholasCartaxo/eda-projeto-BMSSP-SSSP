@@ -20,9 +20,9 @@
         >- baseCase();
         >- bmssp();
         >- solve();
-      >- Produção de uma bateria de testes, que simula casos da vida real;
   2. #### Análise
      Fundamentação de experimentos do algoritmo com base na execução e eficiência de processamento de menor caminho, com ênfase na comparação com o algoritmo de Dijkstra, por meio dos passos da:
+        >- Produção de uma bateria de testes, que simula casos da vida real;
         >- Criação(Plot) de gráficos para os casos de testes tanto para o BMSSP quanto para o algoritmo de Dijkstra;
         >- Análise de comparação entre os dois algoritmos com base nos gráficos gerados, resultando em uma classificação de eficiência;
 
