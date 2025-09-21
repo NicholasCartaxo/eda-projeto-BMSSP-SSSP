@@ -13,17 +13,18 @@ Esse repositório utiliza o artigo [Breaking the Sorting Barrier for Directed Si
 
   O processo de execução do projeto ocorreu por meio da divisão de tarefas dentro de subgrupos do projeto, com reuniões semanais (sprints) e a especificação dos problemas/soluções para o código. Todas as ferramentas para essa produção acadêmica se deram de maneira consensual entre os participantes, a partir de discussões sobre a revisão do desempenho e da dificuldade no cumprimento das especificações do algoritmo de menor caminho.
   Nesse viés, esse projeto foi ramificado em 3 partes práticas e 2 partes de análise e conclusão, sendo cada uma focada em uma tarefa ou funcionalidade específica. Dentre os  objetivos principais do plano de execução do BMSSP, temos, em ordem de implementação no projeto, o/a: 
-  # 1. Prática
-     [!TIP]
-      Criação da estrutura base para a execução do algoritmo, incluindo Árvore PV modificada, FibonacciHeap, DQueue (fila de prioridade) , BatchList (Lista de Lotes de blocos para os nós), etc;
-    Implementação do algoritmo de menor caminho BMSP, dividido nos métodos primários:	
-      - Find Pivots();
-      - Base Case();
-      - BMSSP();
-      - Produção de uma bateria de testes, que simula casos da vida real;
-  # 2. Análise
-      - Criação(Plot) de gráficos para os casos de testes tanto para o BMSSP quanto para o algoritmo de Dijkstra;
-      - Análise de comparação entre os dois algoritmos com base nos gráficos gerados, resultando em uma classificação de eficiência;
+  1. # Prática
+     >[!TIP]
+    >Criação da estrutura base para a execução do algoritmo, incluindo Árvore PV modificada, FibonacciHeap, DQueue (fila de prioridade) , BatchList (Lista de Lotes de blocos para os nós), etc;
+    >Implementação do algoritmo de menor caminho BMSP, dividido nos métodos primários:	
+      >- Find Pivots();
+      >- Base Case();
+      >- BMSSP();
+      >- Produção de uma bateria de testes, que simula casos da vida real;
+  2. # Análise
+      >[!TIP]
+      >- Criação(Plot) de gráficos para os casos de testes tanto para o BMSSP quanto para o algoritmo de Dijkstra;
+      >- Análise de comparação entre os dois algoritmos com base nos gráficos gerados, resultando em uma classificação de eficiência;
 
   Em primeiro lugar, foi realizada a implementação das estruturas básicas. Essa etapa foi dividida entre os integrantes, que se organizaram de maneira a cada um ficar com uma parte da estrutura, auxiliando na otimização do projeto. 
   Após a codificação das estruturas, o próximo passo se deu a partir da verificação do paper¹ do algoritmo e a elaboração dos métodos base para a aplicação correta do código.
