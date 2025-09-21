@@ -15,11 +15,12 @@
   Nesse viés, esse projeto foi ramificado em 3 partes práticas e 2 partes de análise e conclusão, sendo cada uma focada em uma tarefa ou funcionalidade específica. Dentre os  objetivos principais do plano de execução do BMSSP, temos, em ordem de implementação no projeto, o/a: 
   1. #### Prática
      Criação da estrutura base para a execução do algoritmo, incluindo Árvore PV modificada, FibonacciHeap, DQueue (fila de prioridade) , BatchList (Lista de Lotes de blocos para os nós), etc;
-     Implementação do algoritmo de menor caminho BMSP, dividido nos métodos primários:	
-        >- Find Pivots();
-        >- Base Case();
-        >- BMSSP();
-        >- Produção de uma bateria de testes, que simula casos da vida real;
+     Implementação do algoritmo de menor caminho BMSP, dividido nos métodos principais:	
+        >- findPivots();
+        >- baseCase();
+        >- bmssp();
+        >- solve();
+      >- Produção de uma bateria de testes, que simula casos da vida real;
   2. #### Análise
      Fundamentação de experimentos do algoritmo com base na execução e eficiência de processamento de menor caminho, com ênfase na comparação com o algoritmo de Dijkstra, por meio dos passos da:
         >- Criação(Plot) de gráficos para os casos de testes tanto para o BMSSP quanto para o algoritmo de Dijkstra;
