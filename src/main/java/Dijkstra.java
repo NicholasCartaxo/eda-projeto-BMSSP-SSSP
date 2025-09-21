@@ -3,7 +3,6 @@ package main.java;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
-import main.java.commom.dataStructures.Pair;
 import main.java.commom.graph.Graph;
 import main.java.commom.graph.NodeDist;
 
@@ -11,7 +10,7 @@ public class Dijkstra {
    
    private static final long INFINITY = 100000000000000000L;
 
-    private static LinkedList<Pair<Integer,Long>>[] adjacent;
+    private static LinkedList<NodeDist>[] adjacent;
     private static long[] dists;
     private static int[] parents;
     private static boolean[] visited;
@@ -47,9 +46,9 @@ public class Dijkstra {
 
          visited[currentNode] = true;
 
-         for(Pair<Integer,Long> edge: adjacent[currentNode]){
-            int nodeTo = edge.first;
-            long weight = edge.second;
+         for(NodeDist edge: adjacent[currentNode]){
+            int nodeTo = edge.node;
+            long weight = edge.dist;
             if(visited[nodeTo]) continue;
             
             long newDist = currentDist + weight;

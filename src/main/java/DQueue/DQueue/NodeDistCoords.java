@@ -1,7 +1,7 @@
-package main.java.DQueue;
+package main.java.DQueue.DQueue;
 
-import main.java.DQueue.Block.BlockContainer;
-import main.java.DQueue.Block.BlockNode;
+import main.java.DQueue.DQueue.Block.BlockContainer;
+import main.java.DQueue.DQueue.Block.BlockNode;
 import main.java.commom.graph.NodeDist;
 
 public class NodeDistCoords implements Comparable<NodeDistCoords> {

@@ -1,8 +1,8 @@
-package main.java.DQueue.Block;
+package main.java.DQueue.DQueue.Block;
 
 import java.util.Iterator;
 
-import main.java.DQueue.NodeDistCoords;
+import main.java.DQueue.DQueue.NodeDistCoords;
 
 public class BlockIterator implements Iterator<NodeDistCoords> {
 

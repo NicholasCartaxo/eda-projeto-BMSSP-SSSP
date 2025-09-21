@@ -1,9 +1,9 @@
-package main.java.DQueue.Block;
+package main.java.DQueue.DQueue.Block;
 
 import java.util.Iterator;
 
-import main.java.DQueue.NodeDistCoords;
-import main.java.DQueue.util.IntroSelect;
+import main.java.DQueue.DQueue.NodeDistCoords;
+import main.java.DQueue.DQueue.util.IntroSelect;
 import main.java.commom.graph.NodeDist;
 
 public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, BlockContainer {

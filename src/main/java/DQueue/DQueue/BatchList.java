@@ -1,11 +1,13 @@
-package main.java.DQueue;
+package main.java.DQueue.DQueue;
 
 import java.util.HashSet;
-import main.java.DQueue.Block.Block;
-import main.java.DQueue.Block.BlockCollection;
-import main.java.DQueue.Block.BlockContainer;
-import main.java.DQueue.Block.BlockNode;
-import main.java.DQueue.util.IntroSelect;
+
+import main.java.DQueue.DQueue.Block.Block;
+import main.java.DQueue.DQueue.Block.BlockCollection;
+import main.java.DQueue.DQueue.Block.BlockContainer;
+import main.java.DQueue.DQueue.Block.BlockNode;
+import main.java.DQueue.DQueue.util.IntroSelect;
+
 
 class BatchList implements BlockCollection {
 

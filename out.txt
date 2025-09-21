@@ -1,2 +1,2 @@
-dijkstra: 65
-bmssp: 651
+dijkstra: 50
+bmssp: 184

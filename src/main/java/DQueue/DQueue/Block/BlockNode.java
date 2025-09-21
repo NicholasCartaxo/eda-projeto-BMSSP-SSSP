@@ -1,6 +1,6 @@
-package main.java.DQueue.Block;
+package main.java.DQueue.DQueue.Block;
 
-import main.java.DQueue.NodeDistCoords;
+import main.java.DQueue.DQueue.NodeDistCoords;
 
 public class BlockNode{
     public BlockNode next,prev;

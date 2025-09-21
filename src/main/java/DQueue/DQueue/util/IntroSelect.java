@@ -1,9 +1,9 @@
-package main.java.DQueue.util;
+package main.java.DQueue.DQueue.util;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import main.java.DQueue.NodeDistCoords;
+import main.java.DQueue.DQueue.NodeDistCoords;
 
 
 public class IntroSelect {
