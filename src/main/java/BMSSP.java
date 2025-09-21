@@ -35,8 +35,8 @@ public class BMSSP {
         }
         dists[origin] = 0;
 
-        k = (int)Math.floor(Math.pow(log2(graph.numNodes), 1.0/3.0))+5;
-        t = (int)Math.floor(Math.pow(log2(graph.numNodes), 2.0/3.0))+5;
+        k = (int)Math.floor(Math.pow(log2(graph.numNodes), 1.0/3.0));
+        t = (int)Math.floor(Math.pow(log2(graph.numNodes), 2.0/3.0));
 
         int level = (int)Math.ceil(log2(graph.numNodes)/t);
 
