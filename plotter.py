@@ -3,55 +3,64 @@ import matplotlib.pyplot as plt
 
 def plot_algorithm_performance(file_path):
     """
-    Reads algorithm performance data from a CSV file and plots the results.
+    Reads algorithm performance data from a CSV file and plots the results,
+    including a secondary axis for the ratio between the two algorithms.
 
     Args:
         file_path (str): The path to the CSV file containing the data.
                          Expected columns: 'Nodes', 'Dijkstra', 'BMSSP'.
     """
     try:
-        # Read the data from the CSV file into a pandas DataFrame.
-        # A DataFrame is like a spreadsheet or a SQL table.
         data = pd.read_csv(file_path)
 
+        # --- NEW: Calculate the ratio ---
+        # Avoid division by zero if Dijkstra's time is 0 for some reason
+        if (data['Dijkstra'] == 0).any():
+            print("Warning: Dijkstra's algorithm has zero execution time for some entries. Ratio cannot be calculated.")
+            # Create a column of NaNs (Not a Number) for the ratio
+            data['Ratio'] = float('nan')
+        else:
+            data['Ratio'] = data['BMSSP'] / data['Dijkstra']
+
         # --- Create the Plot ---
+        # We now use subplots to get access to the axis objects `ax1` and `ax2`
+        fig, ax1 = plt.subplots(figsize=(12, 7))
 
-        # Set the size of the plot figure for better visibility
-        plt.figure(figsize=(10, 6))
+        # --- Plot Original Data on the Primary Y-Axis (ax1) ---
+        ax1.plot(data['Nodes'], data['Dijkstra'], marker='o', linestyle='-', label='Dijkstra', color='blue')
+        ax1.plot(data['Nodes'], data['BMSSP'], marker='s', linestyle='--', label='BMSSP', color='orange')
 
-        # Plot the 'Nodes' column on the x-axis and 'Dijkstra' on the y-axis.
-        # We add a label for the legend and a marker for each data point.
-        plt.plot(data['Nodes'], data['Dijkstra'], marker='o', linestyle='-', label='Dijkstra')
+        # --- Customize the Primary Y-Axis ---
+        ax1.set_xlabel('Number of Nodes', fontsize=12)
+        ax1.set_ylabel('Execution Time (nanoseconds)', fontsize=12, color='black')
+        ax1.tick_params(axis='y', labelcolor='black')
+        ax1.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
-        # Plot the 'Nodes' column on the x-axis and 'BMSSP' on the y-axis.
-        plt.plot(data['Nodes'], data['BMSSP'], marker='s', linestyle='--', label='BMSSP')
-
-        # --- Customize the Plot ---
-
-        # Add a title to the plot
-        plt.title('Algorithm Performance Comparison: Dijkstra vs. BMSSP', fontsize=16)
-
-        # Add a label to the x-axis
-        plt.xlabel('Number of Nodes', fontsize=12)
-
-        # Add a label to the y-axis (assuming the time is in nanoseconds from your example)
-        plt.ylabel('Execution Time (nanoseconds)', fontsize=12)
-
-        # Display a legend to identify which line corresponds to which algorithm
-        plt.legend()
-
-        # Add a grid for easier reading of values
-        plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+        # --- NEW: Create and Plot Ratio Data on the Secondary Y-Axis (ax2) ---
+        # Create a second y-axis that shares the same x-axis
+        ax2 = ax1.twinx()
+        ax2.plot(data['Nodes'], data['Ratio'], marker='^', linestyle=':', label='Ratio (BMSSP / Dijkstra)', color='green')
         
-        # Use scientific notation for the y-axis to keep it clean if numbers are large
-        plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-        
-        # Adjust layout to make sure everything fits without overlapping
+        # --- NEW: Customize the Secondary Y-Axis ---
+        ax2.set_ylabel('Ratio (BMSSP Time / Dijkstra Time)', fontsize=12, color='green')
+        ax2.tick_params(axis='y', labelcolor='green')
+        # We can add a horizontal line at y=1 to see where one algorithm becomes faster than the other
+        ax2.axhline(y=1, color='red', linestyle='--', linewidth=0.8, label='Ratio = 1')
+
+
+        # --- Customize the Overall Plot ---
+        plt.title('Algorithm Performance: Execution Time and Ratio', fontsize=16)
+        ax1.grid(True, which='both', linestyle='--', linewidth=0.5)
+
+        # --- NEW: Combine Legends from Both Axes ---
+        # To display all labels in one legend box, we get handles/labels from both axes
+        lines1, labels1 = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax2.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+
         plt.tight_layout()
 
         # --- Show the Plot ---
-
-        # Display the plot in a new window
         print("Displaying the plot. Close the plot window to exit the script.")
         plt.show()
 
@@ -65,7 +74,5 @@ def plot_algorithm_performance(file_path):
         print(f"An unexpected error occurred: {e}")
 
 if __name__ == '__main__':
-    # The name of your data file.
-    # Make sure this file is in the same folder as your Python script.
     csv_file = 'results.csv'
     plot_algorithm_performance(csv_file)
