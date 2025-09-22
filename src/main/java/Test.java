@@ -24,22 +24,29 @@ public class Test {
         }
 
         long start, end;
+        long dijkstraTime = 0;
+        long BMSSPTime = 0;
+        long mistakes = 0;
 
-        start = System.nanoTime();
-        long[] dS = Dijkstra.solve(g, 0);
-        end = System.nanoTime();
+        for(int i=0;i<20;i++){
+            start = System.nanoTime();
+            long[] dS = Dijkstra.solve(g, 0);
+            end = System.nanoTime();
+            dijkstraTime += (end-start)/20;
 
-        System.out.println("dijkstra: " + (end - start)/1000000);
+            start = System.nanoTime();
+            long[] bS = BMSSP.solve(g, 0);
+            end = System.nanoTime();
+            BMSSPTime += (end-start)/20;
 
-        start = System.nanoTime();
-        long[] bS = BMSSP.solve(g, 0);
-        end = System.nanoTime();
+            long thisMistakes = 0;
+            for(int j=1;j<=n;j++){
+                if(dS[i] != bS[i]) thisMistakes++;
+            } 
+            mistakes += thisMistakes;
+        }
 
-        System.out.println("bmssp: " + (end - start)/1000000);
-
-        for(int i=0;i<n;i++){
-            if(dS[i] != bS[i]) System.out.println("INCORRECT FOR " + i);
-        } 
+        System.out.printf("%d %d %d\n",dijkstraTime,BMSSPTime,mistakes);
 
     }
 }
