@@ -15,8 +15,6 @@ public class Test {
         int n = Integer.parseInt(firstLine[0]);
         int m = Integer.parseInt(firstLine[1]);
 
-        int maxIn = 0;
-        int maxOut = 0;
         Graph g = new Graph();
         for (int i = 0; i < m; i++) {
             String[] edgeData = br.readLine().split(" ");
@@ -25,35 +23,36 @@ public class Test {
             int w = Integer.parseInt(edgeData[2]);
             
             g.addEdge(u, v, w);
-            g.nodesById.get(v).inDegree++;
-            g.nodesById.get(u).outDegree++;
-
-            maxIn = Math.max(maxIn, g.nodesById.get(v).inDegree);
-            maxOut = Math.max(maxOut, g.nodesById.get(u).outDegree);
         }
-        System.out.printf("in: %d, out: %d\n",maxIn,maxOut);
         Node origin = g.nodesById.get(1);
 
         Dijkstra d = new Dijkstra();
         BMSSP b = new BMSSP();
 
         long start, end;
+        long dijkstraTime = 0;
+        long BMSSPTime = 0;
+        long mistakes = 0;
 
-        start = System.nanoTime();
-        HashMap<Integer,Long> dS = d.solve(g, origin);
-        end = System.nanoTime();
+        for(int i=0;i<20;i++){
+            start = System.nanoTime();
+            HashMap<Integer,Long> dS = d.solve(g, origin);
+            end = System.nanoTime();
+            dijkstraTime += (end-start)/20;
 
-        System.out.println("dijkstra: " + (end - start)/1000000);
+            start = System.nanoTime();
+            HashMap<Integer,Long> bS = b.solve(g, origin);
+            end = System.nanoTime();
+            BMSSPTime += (end-start)/20;
 
-        start = System.nanoTime();
-        HashMap<Integer,Long> bS = b.solve(g, origin);
-        end = System.nanoTime();
+            long thisMistakes = 0;
+            for(int j=1;j<=n;j++){
+                if(!dS.get(j).equals(bS.get(j))) thisMistakes++;
+            } 
+            mistakes += thisMistakes;
+        }
 
-        System.out.println("bmssp: " + (end - start)/1000000);
-
-        for(int i=1;i<=n;i++){
-            if(!dS.get(i).equals(bS.get(i))) System.out.println("INCORRECT FOR " + i);
-        } 
+        System.out.printf("%d %d %d\n",dijkstraTime,BMSSPTime,mistakes);
 
     }
 }

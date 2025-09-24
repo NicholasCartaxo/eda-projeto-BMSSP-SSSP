@@ -8,8 +8,8 @@ public class BlockIterator implements Iterator<NodeDistCoords> {
 
     private BlockNode curr;
 
-    public BlockIterator(Block block){
-        curr = block.getHead();
+    public BlockIterator(Block block, BlockNode head){
+        curr = head;
     }
 
     @Override

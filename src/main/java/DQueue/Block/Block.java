@@ -5,7 +5,6 @@ import java.util.Iterator;
 import main.java.DQueue.NodeDistCoords;
 import main.java.DQueue.util.IntroSelect;
 import main.java.commom.dataStructures.NodeDist;
-import main.java.commom.graph.Node;
 
 public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, BlockContainer {
     private final int blockSize;
@@ -58,7 +57,7 @@ public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, Block
         NodeDistCoords median = IntroSelect.select(this, (size()-1)/2);
 
         Block newBlock = new Block(blockSize, upperBound);
-        
+
         BlockNode aux = head;
         while(aux != null){
             if(aux.value.compareTo(median) <= 0){
@@ -73,13 +72,9 @@ public class Block implements Iterable<NodeDistCoords>, Comparable<Block>, Block
         return newBlock;
     }
 
-    public BlockNode getHead(){
-        return head;
-    }
-
     @Override
     public Iterator<NodeDistCoords> iterator() {
-        return new BlockIterator(this);
+        return new BlockIterator(this,head);
     }
     
     @Override
