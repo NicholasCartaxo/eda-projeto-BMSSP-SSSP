@@ -48,3 +48,5 @@
 ## Resultados
 
 # Considerações Finais
+
+  Portanto, conclui-se que o algoritmo BMSSP não apenas otimiza a resolução de problemas de menor caminho, mas também se apresenta como uma alternativa congruente e eficiente para futuras aplicações acadêmicas e de mercado que exijam alto desempenho no processamento de grafos.
