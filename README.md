@@ -3,8 +3,6 @@
 
   Esse repositório utiliza o artigo [Breaking the Sorting Barrier for Directed Single-Source Shortest Paths](https://arxiv.org/abs/2504.17033) como base para implementar e documentar o **BMSSP** resolvendo o problema de menor caminho para uma única fonte. Além disso, é feita uma comparação experimental com **Dijkstra**, a fim de analisar a superação da barreira de tempo para **SSSP** prometida.
 
-# Documentação
-
 ## Introdução
   Algoritmos de menor caminho identificam o caminho mais curto entre pontos em um grafo. O caminho mais curto se refere à soma dos pesos das arestas (custo, tempo ou distância). Essa questão é de suma importância para diversas aplicações, e a eficiência com que o menor caminho é encontrado é crucial para o bom funcionamento de redes de fluxos,  as quais se aplicam à logística de transportes de produtos, à escolha de rotas em redes digitais e aos algoritmos de recomendação de redes sociais. O recém-lançado **BMSSP** é um algoritmo para identificar os caminho mais curtos para fonte única que quebra a barreira de tempo de **Dijkstra**, e a falta de implementações e documentações sobre ele motivaram esse estudo. Para essa análise, o grupo implementou o programa em Java, documentou seu funcionamento e realizou testes de comparação de eficiência com o algoritmo de menor caminho de **Dijkstra**. 
 
@@ -13,6 +11,7 @@
   O algoritmo já tradicional de **Dijkstra** possui uma complexidade de tempo $O(m\log n)$, sendo **n** o número de nós e **m** o número de arestas, o que era considerado a barreira para esse tipo de problema. O artigo **Breaking the Sorting Barrier for Directed Single-Source Shortest Paths** introduz um novo algoritmo teórico com complexidade de tempo $O(m\log^{2/3}n)$, quebrando essa barreira. No entanto, a ausência de implementações concretas e documentadas desse algoritmo dificulta sua compreensão e análise prática, limitando o acesso ao conteúdo por parte da comunidade acadêmica e técnica.
   Diante disso, este projeto tem como objetivo realizar a implementação do algoritmo proposto no artigo referenciado, seguindo sua lógica, suas estruturas de dados e suas estratégias de otimização de forma fidedigna. Para isso, o código será feito com Java, utilizando otimizações de implementação e da linguagem quando possível, sem alterar sua complexidade, permitindo a validação de seu funcionamento. Além disso, são realizados testes comparativos entre os algoritmos, utilizando grafos esparsos, já que a diferença de complexidade é mais proeminente com **m** pequeno, e com graus parecidos entre os nós, já que o artigo assume essa configuração que se satisfaça a complexidade.
 
+# Metodologia
   O processo de execução do projeto ocorreu por meio da divisão de tarefas dentro de subgrupos do projeto, com reuniões semanais (sprints) e a especificação dos problemas/soluções para o código. Todas as ferramentas para essa produção acadêmica se deram de maneira consensual entre os participantes, a partir de discussões sobre a revisão do desempenho e da dificuldade no cumprimento das especificações do algoritmo de menor caminho.
   Nesse viés, esse projeto foi ramificado em 4 partes práticas e 2 partes de análise e conclusão, sendo cada uma focada em uma tarefa ou funcionalidade específica. Dentre os  objetivos principais do plano de execução do BMSSP, temos, em ordem de implementação no projeto, o/a: 
   1. #### Prática
@@ -28,6 +27,8 @@
 
   Primeiramente, foram definidas as estruturas iniciais de grafos e as estruturas de dados que seriam usadas para implementar as abstrações do artigo. Depois, foi realizada a implementação das funções separadamente. Essa etapa foi dividida entre os integrantes, que se organizaram de maneira a cada um ficar com uma parte da estrutura, auxiliando na otimização do projeto. 
   Por fim, foi executada uma bateria de testes com o intuito de verificar se o **BMSSP** resolve corretamente os problemas de tamanhos variados e de analisar o tempo de execução, com a plotagem dos gráficos de comparação para a visualização da complexidade de tempo.
+
+# Documentação
 
 ## Ideia geral do Algoritmo
 
