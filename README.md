@@ -42,6 +42,10 @@
 
   Assim, a primeira chamada do `bmssp` contem um limite superior infinito, já que almeja-se solucionar todos os nós, independente da distância, e o único nó completado é a origem, com distância nula.
 
+  Além disso, é importante destacar a relação do algoritmo com a fila de prioridade (priority queue). Durante sua execução, o Dijkstra precisa manter a fronteira, que é o conjunto de vértices já descobertos mas que ainda não foram inteiramente processados, o que significa que sua distância mínima provisória em relação à origem é conhecida, mas o algoritmo pode ainda não ter explorado inteiramente os vértices vizinhos. Esses vértices da fronteira são armazenados em uma fila de prioridade, da qual o próximo vértice mais próximo é repetidamente extraído. A fronteira no algoritmo de Dijkstra pode ter até 'n' elementos, sendo 'n' o número de vértices. Extrair um vértice de cada vez traz um custo adicional de log(n) por operação, e um custo de n.log(n) no total.
+
+  O BMSSP diminui recursivamente o tamanho da fronteira considerada, misturando o algoritmo de Dijkstra e o algoritmo Bellman-Ford, junto com a estrutura de dados estrategicamente desenvolvida que permite inserção e remoção em grupos. Como resultado, o número total de operações pode ser significativamente reduzido, levando a melhorias no tempo de execução do algoritmo e tornando-o mais rápido. 
+
 ## Implementação
 
   A implementação do algoritmo está organizada em três métodos principais: BMSSP, Base Case e Find Pivots. Além desses, foi desenvolvido também o método solve, responsável por receber o nó de origem e o grafo sobre o qual o algoritmo será executado. Esse método realiza a inicialização das constantes e das estruturas de dados necessárias, define as distâncias de cada nó com valor infinito e, em seguida, chama o método BMSSP. Todas as constantes utilizadas, bem como seus respectivos valores, encontram-se descritas no artigo apresentado no início deste documento.
