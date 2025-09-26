@@ -70,6 +70,22 @@
 
   Após a conclusão do laço, caso o tamanho do conjunto **completeNodes** seja inferior ao limite, os pivôs são selecionados. Então, são feitas as árvores dos menores caminhos com os nós especificados, a partir de uma referência, para cada nó, do nó anterior do seu caminho. Com isso, para os nós de **border**, é verificado se ele é raiz de uma árvore de menor caminho com tamanho maior ou igual a K; caso positivo, o nó é adicionado ao conjunto de pivôs. Por fim, o método `findPivots()` retorna todos os pivôs identificados, bem como todos os nós completados durante o processo.
 
+  ### DQueue
+
+  Quanto à **DQueue**, a estrutura especializada do artigo, ela é definida como uma fila de prioridade em blocos, sendo inicializada com um tamanho de bloco $M$ e um limite superior dos valores que armazena, e existem 3 métodos utilizados pelo algoritmo:
+
+  - **Insert**: insere um par (nó,distância) na estrutura, se somente se não houver um par desse nó com uma distância menor, também deletando o par que tiver distância maior. Funciona em $O(\log(N/M))$ amortizado
+  - **BatchPrepend**: insere um conjunto de $L$ pares (nó,distância) com distâncias menores que todas já presentes na estrutura. Funciona em $O(L\log(L/M))$ amortizado.
+  - **Pull**: retorna e deleta da estrutura os $M$ nós com as menores distâncias associadas, também retorna a limite superior entre os elementos retirados e os ainda armazenados. Funciona em $O(M)$ amortizado.
+
+  Para essa implementação, existem 2 estruturas internas, a **BatchList**, e a **InsertTree**, que armazenam, respecitavamente, os elementos do `batchPrepend()` e do `insert` respectivamente.
+
+  A **BatchList** é uma pilha de blocos, onde cada bloco possui até $M$ elementos, para isso, os elementos a serem adicionados são repartidos por suas medianas até entrarem no limite definido.
+
+  A **InsertTree** é uma Árvore Preta e Vermelha (Cruz Maltina para os vascaínos do grupo) de blocos, onde cada bloco possui um limite superior, pelo qual a árvore se ordena. Ao adicionar um novo elemento, é o menor limite superior maior que ele, adicionando-o ao bloco correto. Depois, caso o bloco passe de $M$ elementos, ele é repartido pela mediana, com o novo bloco menor sendo adicionado à árvore.
+
+  Enfim, para o `pull()`, ambas as estruturas apresentam os seus respectivos $M$ menores elementos, e há uma partição dos $M$ menores entre eles, os quais são deletados da estrutura e retornados junto com o limite entre tais elementos e o restante.
+
 ## Exemplo Prático
   Para um melhor entendimento do algoritmo, será usado um pequeno grafo exemplo, sem as especificidades teóricas. Aqui, o nó de origem é o **1**, e a primeira chamada do `bmssp()` terá nível **3**, **upperBound** infinito e apenas a origem **1** como nó inicial, com $k=1$ e $t=1$, calculados a partir do número de nós $n=6$.
 
@@ -140,7 +156,7 @@
 
 ## Resultados
 
-  Os dados puros podem ser vistos em [RESULTS]$(benchmarkResults/results.csv). Analisando-os, percebe-se a ausência de erros nas respostas em relaçao a **Dijkstra**, indicando fortemente a corretude do algoritmo para o problema de **SSSP**. Quanto à análise de tempo de execução, com base no gráfico, percebe-se que, apesar da complexidade de $O(m\log^{2/3}n)$ do **BMSSP**, seu desempenho prático não superou o do algoritmo de **Dijkstra**. Isso se deve, provavelmente, ao alto valor das constantes, pois a complexidade de algumas operações é muito grande, o algoritmo utiliza muita recursão, e muitos objetos precisam ser criados em tempo de execução (devido à natureza recursiva). Todos esses fatores, somados à pequena diminuição de custo, de $O(m\log n)$ para $O(m\log^{2/3}n)$, fazem com que o **BMSSP** não tenha superado o desempenho de **Dijkstra** para os grafos analisados. Entretanto, apesar dessas questões, ainda que o **Dijkstra** se mostre mais eficiente, como podemos ver no gráfico, a razão (plotagem verde) está decrescendo, o que mostra que, assintoticamente, a complexidade de tempo menor foi alcançada, superando a de **Dijkstra**.
+  Os dados puros podem ser vistos em [RESULTS]$(benchmarkResults/results.csv). Analisando-os, percebe-se a ausência de erros nas respostas em relaçao a **Dijkstra**, indicando fortemente a corretude do algoritmo para o problema de **SSSP**. Quanto à análise de tempo de execução, com base no gráfico, percebe-se que, apesar da complexidade de $O(m\log^{2/3}n)$ do **BMSSP**, seu desempenho prático não superou o do algoritmo de **Dijkstra**. Isso se deve, provavelmente, ao alto valor das constantes, pois a complexidade de algumas operações é muito grande, o algoritmo utiliza muita recursão, e muitos objetos precisam ser criados em tempo de execução (devido à natureza recursiva). Todos esses fatores, somados à pequena diminuição de custo, de $O(m\log n)$ para $O(m\log^{2/3}n)$, fazem com que o **BMSSP** não tenha superado o desempenho de **Dijkstra** para os grafos analisados. Entretanto, apesar dessas questões, ainda que o **Dijkstra** se mostre mais eficiente, como podemos ver no gráfico, a razão (plotagem verde) apresenta um comportamento decrescente. Assim, há a forte hipótese de que, assintoticamente, a complexidade de tempo menor foi alcançada, superando a de **Dijkstra**, já que essa diminuição da razão aponta para um cresimento menor do tempo de execução de **BMSSP** em relação a **Dijkstra**.
 
   ![Gráfico comparativo Dijkstra e BMSSP](benchmarkResults/benchmarkResults.png)
 
