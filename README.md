@@ -48,7 +48,7 @@
 
 ## Implementação
 
-  A implementação do algoritmo está organizada em três métodos principais: `bmssp()`, `baseCase()` e `findPivots`. Além desses, foi desenvolvido também o método `solve()`, responsável por receber o nó de origem e o grafo sobre o qual o algoritmo será executado, que realiza a inicialização das constantes e das estruturas de dados necessárias, define as distâncias de cada nó com valor infinito (exceto da distância nula da origem) e, em seguida, chama o método `bmssp()` com os devidos parâmetros iniciais. Quanto a essas constantes, o artigo define, para o bom funcionamento da divisão as constantes $k=\left \lfloor{\log^{1/3}n}\right \rfloor$, $t=\left \lfloor{\log^{2/3}n}\right \rfloor$ e  $level=\left \lceil{(\log n)/t}\right \rceil$.
+  A implementação do algoritmo está organizada em três métodos principais: `bmssp()`, `baseCase()` e `findPivots`. Além desses, foi desenvolvido também o método `solve()`, responsável por receber o nó de origem e o grafo sobre o qual o algoritmo será executado, que realiza a inicialização das constantes e das estruturas de dados necessárias, define as distâncias de cada nó com valor infinito (exceto da distância nula da origem) e, em seguida, chama o método `bmssp()` com os devidos parâmetros iniciais. Quanto a essas constantes, o artigo define, para o bom funcionamento da divisão as constantes $k=\left \lfloor{\log^{1/3}n}\right \rfloor$, $t=\left \lfloor{\log^{2/3}n}\right \rfloor$ e  $level=\left \lceil{(\log n)/t}\right \rceil$. Além disso, é definido, para o retorno do algoritmo, uma estrutura global que armazena, para todos os nós, a menor distância entre a origem e ele.
 
   ### BMSSP
   O método `bmssp()` é responsável por controlar a recursão principal do algoritmo, dividindo o problema geral em subproblemas até que o caso base seja alcançado, ou seja, quando o nível de recursão atinge zero. Esse método recebe inicialmente três parâmetros. O primeiro é o nível de recursão (level), utilizado como condição de parada. O segundo é um valor numérico denominado limite superior (upper bound), que estabelece a região em que os três métodos irão atuar. Por exemplo, se o limite superior for igual a 5, os métodos somente modificarão os nós cuja distância em relação ao nó de referência seja menor ou igual a 5. Inicialmente, esse limite é definido como infinito, garantindo que seja sempre maior do que qualquer distância finita. O terceiro parâmetro consiste em um conjunto de nós com distâncias já conhecidas. Esse conjunto, no início da execução, contém apenas o nó de origem — isto é, o nó a partir do qual serão calculadas as distâncias para todos os demais. A primeira operação realizada pelo método consiste em verificar se o nível de recursão é igual a zero. Nesse caso, o problema já se encontra suficientemente reduzido e o método retorna a chamada para o `baseCase()`. Caso contrário, o algoritmo recorre ao método `findPivots` para identificar os pivôs da recursão atual, definidos com base nos nós já conhecidos e no limite superior vigente. Em seguida, é inicializada a **DQueue**, uma estrutura de fila projetada para recuperar, de forma otimizada, os **M** menores elementos em uma única consulta, um chamado bloco. A estrutura é instanciada com dois parâmetros: o limite superior atual e o tamanho do bloco (**block size**), definido como $M=2^{(level-1)t}$. O uso de (nível - 1) deve-se ao fato de que os blocos retirados serão utilizados na próxima chamada recursiva, a de nível menor. Após a inicialização, todos os pivôs identificados são inseridos na **DQueue**, e o limite superior do nós completados assume o valor da menor distância entre os pivôs (esse seria o **b** utilizado como base para o **B**). Em seguida, é definido um novo conjunto, denominado **newCompleteNodes**, destinado a armazenar os nós que terão suas distâncias determinadas em relação ao nó de origem durante a execução do laço principal do `bmssp()`. Também é estabelecido um limite máximo para o tamanho desse conjunto, definido como $maxSize=k2^{t}$, para garantir que uma única chamada do método não execute mais do que o definido pela divisão. A partir disso, enquanto o tamanho do conjunto não ultrapassar esse limite e a **DQueue** não estiver vazia, o laço principal do algoritmo é executado. O funcionamento desse laço pode ser descrito da seguinte forma:
@@ -84,8 +84,41 @@
 
   3. Todos os nós do conjunto **currentNodes** são adicionados ao conjunto **completeNodes**, e **currentNodes** se torna **prevNodes**. Além disso, antes da próxima iteração do laço, verifica-se se o tamanho do conjunto **completeNodes** excede $k\cdot|border|$, caso isso ocorra, o método retorna todo o conjunto **border** como pivôs, juntamente com o conjunto Complete Nodes.
 
-  Após a conclusão do laço, caso o tamanho do conjunto **completeNodes** seja inferior ao limite, os pivôs são selecionados. Para cada nó de **border**, é verificado se ele é raiz de uma árvore dos menores caminhos formada no grafo com tamanho maior ou igual a K; caso positivo, o nó é adicionado ao conjunto de pivôs. Por fim, o método `findPivots()` retorna todos os pivôs identificados, bem como todos os nós completados durante o processo.
+  Após a conclusão do laço, caso o tamanho do conjunto **completeNodes** seja inferior ao limite, os pivôs são selecionados. Então, são feitas as árvores dos menores caminhos com os nós especificados, a partir de uma referência, para cada nó, do nó anterior do seu caminho. Com isso, para os nós de **border**, é verificado se ele é raiz de uma árvore de menor caminho com tamanho maior ou igual a K; caso positivo, o nó é adicionado ao conjunto de pivôs. Por fim, o método `findPivots()` retorna todos os pivôs identificados, bem como todos os nós completados durante o processo.
 
+## Exemplo Prático
+  Para um melhor entendimento do algoritmo, será usado um pequeno grafo exemplo, sem as especificidades teóricas. Aqui, o nó de origem é o **1**, e a primeira chamada do `bmssp()` terá nível **3**, **upperBound** infinito e apenas a origem **1** como nó inicial, com $k=1$ e $t=1$, calculados a partir do número de nós $n=6$.
+
+  ![Grafo 1](images/graph_1.png)
+
+  No `findPivots()`, o **1** será escolhido como pivô, já que há $k=1$ iterações, a qual também completa os nós **3** e **5**, com as distâncias **5** e **15**.
+
+  Adicionando o pivô na **DQueue**, o método `pull()` irá retornar apenas **1**, com **upperBound** infinito, já que ela se torna vazia. Então, as próximas chamadas recursivas irão repetir o comportamento, até que o nível chegue a 0.
+
+  Com isso, haverá o `baseCase()` com origem **1**, solucionando $k=1$ nós por vez, nesse caso, apenas o 3, e retornando um $upperBound=8$, a maior distância que ele achou, mas não completou, ou seja, todos os nós de distância menor que 8 estão completos.
+
+  ![Grafo 2](images/graph_2.png)
+
+  Dessa forma, a última chamada recursiva do `bmssp()`, de nível 1, também termina, pois ela já completou **2** nós, atingindo seu limite. Agora, voltando ao nível 2, outra chamada de nível 1 será feita, completando mais **2** nós, sendo eles **4** e **5** e suas distâncias **8** e **11** respectivamente, com a mesma estratégia de chegar até o caso base. Assim, acaba a primeira chamada de nível 2, completando seu máximo de **4** nós, com $upperBound=13$, então todos os nós de distância menor que **13** estão completos.
+
+  ![Grafo 3](images/graph_3.png)
+
+  Agora, voltando a primeira chamada, de nível 3, ela ainda não está completa, havendo, então, outra chamada de nível 2, que repete o mesmo processo de antes, até os casos base, resolvendo **2** e **6** com as respectivas distâncias de **13** e **15**. Então, o nível 1 completa com esses 2 nós, voltando ao nível 2, nesse momento, todos os nós estão solucionados, então não é adicionado nenhum novo valor na **DQueue**, a qual fica vazia, completando o nível 2, com **upperBound** infinito, e o mesmo ocorre com o nível 3, terminando a primeira chamada e, assim, todo o algoritmo.
+
+  ![Grafo 4](images/graph_4.png)
+
+  Percebe-se que o retorno do algoritmo repete a primeira chamada de `bmssp()`, mas agora, há o retorno de todos os nós presentes, indicando que suas menores distâncias foram solucionadas e armazenadas como resposta do problema de **SSSP**.
+
+  Desse modo, o retorno de `solve()`, nesse caso, será o seguinte:
+
+  | Nó | Menor Distância |
+  |-|-|
+  |1|0|
+  |2|13|
+  |3|5|
+  |4|8|
+  |5|11|
+  |6|15|
 
 # Experimentação
 
@@ -97,11 +130,11 @@
 
 ## Resultados
 
-  Os dados puros podem ser vistos em [RESULTS](results.csv). Percebe-se a ausência de erros ao longo de toda a experimentação.
+  Os dados puros podem ser vistos em [RESULTS](benchmarkResults/results.csv). Percebe-se a ausência de erros ao longo de toda a experimentação.
 
   Como resultado desse projeto, foi realizada com sucesso a implementação do algoritmo BMSSP, que apresentou uma complexidade de implementação elevada devido a pouca quantidade de materiais disponíveis sobre o assunto. Além disso, foi desenvolvido esta documentação, que pode ser utilizada como material para estudo do funcionamento e implementação do novo algoritmo. Por fim, foi realizada uma comparação entre os algoritmos BMSSP e Dijkstra, a fim de analisar de forma prática a eficiência de ambos para o mesmo problema, uma vez que, apesar da classe de complexidade do novo algoritmo ser menor do que a de Dijkstra, constantes elevadas podem fazer com que o Dijkstra seja mais eficiente na prática. Sendo assim, os dois algoritmos foram submetidos a problemas de SSP em grafos direcionados com pesos não negativos. O gráfico abaixo mostra o tempo de execução dos dois algoritmos em grafos que vão de 1000 até 1 milhão de nós:
 
-  ![Gráfico comparativo Dijkstra e BMSSP](benchmarkResults.png)
+  ![Gráfico comparativo Dijkstra e BMSSP](benchmarkResults/benchmarkResults.png)
 
 Com base no gráfico, percebe-se que, apesar da complexidade de O(mlog2/3n) do **BMSSP**, seu desempenho prático não superou o do algoritmo de **Dijkstra**. Isso se deve ao alto valor das constantes, pois a complexidade de algumas operações é grande, o algoritmo utiliza muita recursão, e muitos objetos precisam ser criados em tempo de execução (devido à natureza recursiva). Todos esses fatores, somados à pequena diminuição de custo - O(mlog n) para O(mlog2/3n) - fazem com que o **BMSSP** não tenha superado o desempenho de **Dijkstra** para os grafos analisados. Entretanto, apesar dessas questões, ainda que o **Dijkstra** se mostre mais eficiente, como podemos ver no gráfico, a razão (reta verde) está decrescendo, o que mostra que, assintoticamente, a complexidade de tempo menor foi alcançada, superando a de **Dijkstra**.
 
