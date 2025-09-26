@@ -6,29 +6,13 @@
 ## Introdução
   Algoritmos de menor caminho identificam o caminho mais curto entre pontos em um grafo. O caminho mais curto se refere à soma dos pesos das arestas (custo, tempo ou distância). Essa questão é de suma importância para diversas aplicações, e a eficiência com que o menor caminho é encontrado é crucial para o bom funcionamento de redes de fluxos,  as quais se aplicam à logística de transportes de produtos, à escolha de rotas em redes digitais e aos algoritmos de recomendação de redes sociais. O recém-lançado **BMSSP** é um algoritmo para identificar os caminho mais curtos para fonte única que quebra a barreira de tempo de **Dijkstra**, e a falta de implementações e documentações sobre ele motivaram esse estudo. Para essa análise, o grupo implementou o programa em Java, documentou seu funcionamento e realizou testes de comparação de eficiência com o algoritmo de menor caminho de **Dijkstra**. 
 
-## BMSSP
+## Objetivo
   A busca pelos menores caminho de fonte única em grafos direcionados com pesos não negativos é um problema central na ciência da computação. Nesse contexto, o algoritmo de **Dijkstra** consolidou-se como o método padrão para resolver o problema de caminho mínimo a partir de uma única fonte, devido à sua eficiência. 
   O algoritmo já tradicional de **Dijkstra** possui uma complexidade de tempo $O(m\log n)$, sendo **n** o número de nós e **m** o número de arestas, o que era considerado a barreira para esse tipo de problema. O artigo **Breaking the Sorting Barrier for Directed Single-Source Shortest Paths** introduz um novo algoritmo teórico com complexidade de tempo $O(m\log^{2/3}n)$, quebrando essa barreira. No entanto, a ausência de implementações concretas e documentadas desse algoritmo dificulta sua compreensão e análise prática, limitando o acesso ao conteúdo por parte da comunidade acadêmica e técnica.
   Diante disso, este projeto tem como objetivo realizar a implementação do algoritmo proposto no artigo referenciado, seguindo sua lógica, suas estruturas de dados e suas estratégias de otimização de forma fidedigna. Para isso, o código será feito com Java, utilizando otimizações de implementação e da linguagem quando possível, sem alterar sua complexidade, permitindo a validação de seu funcionamento. Além disso, são realizados testes comparativos entre os algoritmos, utilizando grafos esparsos, já que a diferença de complexidade é mais proeminente com um **m** pequeno, e com graus parecidos entre os nós, já que o artigo assume essa configuração para que se satisfaça a complexidade.
 
-# Metodologia
-  O processo de execução do projeto ocorreu por meio da divisão de tarefas dentro de subgrupos do projeto, com reuniões semanais (sprints) e a especificação dos problemas/soluções para o código. Todas as ferramentas para essa produção acadêmica se deram de maneira consensual entre os participantes, a partir de discussões sobre a revisão do desempenho e da dificuldade no cumprimento das especificações do algoritmo de menor caminho.
-  Nesse viés, esse projeto foi ramificado em 4 partes práticas e 2 partes de análise e conclusão, sendo cada uma focada em uma tarefa ou funcionalidade específica. Dentre os  objetivos principais do plano de execução do BMSSP, temos, em ordem de implementação no projeto, a: 
-  1. #### Prática
-      A implementação propriamente dita do algoritmo, seguindo a mesma divisão do artigo em métodos, além da estrutura auxiliar especializada definida para o funcionamento.
-        - `DQueue()`
-        - `findPivots()`
-        - `baseCase()`
-        - `bmssp()`
-  2. #### Análise
-      Experimentação do **BMSSP** em comparação com **Dijkstra** para verificação de corretude e para análise gráfica dos tempos de execução.
-        - Comparação dos resultados dos algoritmos para comprovar a corretude do algoritmo. 
-        - Plotagem de gráficos para o tempo de execução tanto para o **BMSSP** quanto para o algoritmo de **Dijkstra** para a análise de eficiência.
 
-  Primeiramente, foram definidas as estruturas iniciais de grafos e as estruturas de dados que seriam usadas para implementar as abstrações do artigo. Depois, foi realizada a implementação das funções separadamente. Essa etapa foi dividida entre os integrantes, que se organizaram de maneira a cada um ficar com uma parte da estrutura, auxiliando na otimização do projeto. 
-  Por fim, foi executada uma bateria de testes com o intuito de verificar se o **BMSSP** resolve corretamente os problemas de tamanhos variados e de analisar o tempo de execução, com a plotagem dos gráficos de comparação para a visualização da complexidade de tempo.
-
-# Documentação
+# Fundamentação teórica 
 
 ## Ideia geral do Algoritmo
 
@@ -120,23 +104,48 @@
   |5|11|
   |6|15|
 
-# Experimentação
 
-## Metodologia
+# Metodologia
+  Nesse viés, esse projeto foi ramificado em duas partes: uma prática e uma experimental.  Dentre os  objetivos principais do plano de execução do BMSSP, temos: 
 
-  Para a experimentação entre os 2 algoritmos, foram criados em tempo de execução grafos esparsos aleatórios. Todos os grafos foram criados com `n` nós e `2n` arestas de pesos não negativos aleatórios, primeiramente garantiu-se que havia um caminho para todos os nós adicionados e, depois, as arestas restantes foram adicionadas de forma aleatória, assim, a quantidade de arestas que entram e saem dos nós se mantém na mesma ordem de magnitude ao longo de todo o grafo. Essas especificações foram necessárias para promover uma entrada extensa, randômica, mas no cenário em que, segundo o artigo, o novo algoritmo melhor funciona, com grafos esparsos de graus constantes entre os nós. Com isso, foi possível analisar empiricamente os dois algoritmos exatamente nas situações propostas pelo artigo.
+## Prática
 
-  Dessa forma, foram criados grafos de tamanho `1.000` a `1.000.000` com intervalos de `1.000` entre eles, sendo cada um executado `20` vezes em cada algoritmo, obtendo-se a média do tempo de execução de cada um, bem como a verificação de incongruências nos resultados do **BMSSP**
+  A implementação propriamente dita do algoritmo, seguindo a mesma divisão do artigo em métodos, além da estrutura auxiliar especializada definida para o funcionamento.
+
+  - `DQueue()`
+  - `findPivots()`
+  - `baseCase()`
+  - `bmssp()`
+
+  Primeiramente, foram definidas as estruturas iniciais de grafos e as estruturas de dados que seriam usadas para implementar as abstrações do artigo. Depois, foi realizada a implementação das funções separadamente. Essa etapa foi dividida entre os integrantes, que se organizaram de maneira a cada um ficar com uma parte da estrutura, auxiliando na otimização do projeto. 
+
+## Experimental
+
+  Experimentação do **BMSSP** em comparação com **Dijkstra** para verificação de corretude e para análise gráfica dos tempos de execução.
+  
+  - Comparação dos resultados dos algoritmos para comprovar a corretude do algoritmo. 
+  - Plotagem de gráficos para o tempo de execução tanto para o **BMSSP** quanto para o algoritmo de **Dijkstra** para a análise de eficiência.
+
+  Para a experimentação entre os 2 algoritmos, foram criados, em tempo de execução, grafos esparsos aleatórios. Todos os grafos foram criados com $n$ nós e $2n$ arestas de pesos não negativos aleatórios, entre $1$ e $10^9$, primeiramente garantiu-se que havia um caminho para todos os nós adicionados e, depois, as arestas restantes foram adicionadas de forma aleatória, assim, a quantidade de arestas que entram e saem dos nós se mantém na mesma ordem de magnitude ao longo de todo o grafo. Essas especificações foram necessárias para promover uma entrada extensa, randômica, mas no cenário em que, segundo o artigo, o novo algoritmo melhor funciona, com grafos esparsos de graus constantes entre os nós. Com isso, foi possível analisar empiricamente os dois algoritmos exatamente nas situações propostas pelo artigo.
+
+  Dessa forma, foram criados grafos de tamanho $10^3$ a $10^6$ com intervalos de $10^3$ entre eles, sendo cada um executado $20$ vezes em cada algoritmo, obtendo-se a média do tempo de execução de cada um, utilizando a diferença em nanossegundos de `System.nanoTime()` de Java antes e depois da chamada de cada algortimo. Também, houve a verificação de incongruências nos resultados do **BMSSP** em relação a **Dijkstra**, contabilizando diferenças nos resultados das menores distâncias para todos os grafos analisados.
+
+  Quanto a experimentação propriamente dita, ela foi feita em uma máquina com as seguintes especificações:
+  |||
+  |-|-|
+  |RAM|32GB|
+  |CPU|i5-10500|
+
+
 
 ## Resultados
 
-  Os dados puros podem ser vistos em [RESULTS](benchmarkResults/results.csv). Percebe-se a ausência de erros ao longo de toda a experimentação.
-
-  Como resultado desse projeto, foi realizada com sucesso a implementação do algoritmo BMSSP, que apresentou uma complexidade de implementação elevada devido a pouca quantidade de materiais disponíveis sobre o assunto. Além disso, foi desenvolvido esta documentação, que pode ser utilizada como material para estudo do funcionamento e implementação do novo algoritmo. Por fim, foi realizada uma comparação entre os algoritmos BMSSP e Dijkstra, a fim de analisar de forma prática a eficiência de ambos para o mesmo problema, uma vez que, apesar da classe de complexidade do novo algoritmo ser menor do que a de Dijkstra, constantes elevadas podem fazer com que o Dijkstra seja mais eficiente na prática. Sendo assim, os dois algoritmos foram submetidos a problemas de SSP em grafos direcionados com pesos não negativos. O gráfico abaixo mostra o tempo de execução dos dois algoritmos em grafos que vão de 1000 até 1 milhão de nós:
+  Os dados puros podem ser vistos em [RESULTS]$(benchmarkResults/results.csv). Analisando-os, percebe-se a ausência de erros nas respostas em relaçao a **Dijkstra**, indicando fortemente a corretude do algoritmo para o problema de **SSSP**. Quanto à análise de tempo de execução, com base no gráfico, percebe-se que, apesar da complexidade de $O(m\log^{2/3}n)$ do **BMSSP**, seu desempenho prático não superou o do algoritmo de **Dijkstra**. Isso se deve, provavelmente, ao alto valor das constantes, pois a complexidade de algumas operações é muito grande, o algoritmo utiliza muita recursão, e muitos objetos precisam ser criados em tempo de execução (devido à natureza recursiva). Todos esses fatores, somados à pequena diminuição de custo, de $O(m\log n)$ para $O(m\log^{2/3}n)$, fazem com que o **BMSSP** não tenha superado o desempenho de **Dijkstra** para os grafos analisados. Entretanto, apesar dessas questões, ainda que o **Dijkstra** se mostre mais eficiente, como podemos ver no gráfico, a razão (plotagem verde) está decrescendo, o que mostra que, assintoticamente, a complexidade de tempo menor foi alcançada, superando a de **Dijkstra**.
 
   ![Gráfico comparativo Dijkstra e BMSSP](benchmarkResults/benchmarkResults.png)
 
-Com base no gráfico, percebe-se que, apesar da complexidade de O(mlog2/3n) do **BMSSP**, seu desempenho prático não superou o do algoritmo de **Dijkstra**. Isso se deve ao alto valor das constantes, pois a complexidade de algumas operações é grande, o algoritmo utiliza muita recursão, e muitos objetos precisam ser criados em tempo de execução (devido à natureza recursiva). Todos esses fatores, somados à pequena diminuição de custo - O(mlog n) para O(mlog2/3n) - fazem com que o **BMSSP** não tenha superado o desempenho de **Dijkstra** para os grafos analisados. Entretanto, apesar dessas questões, ainda que o **Dijkstra** se mostre mais eficiente, como podemos ver no gráfico, a razão (reta verde) está decrescendo, o que mostra que, assintoticamente, a complexidade de tempo menor foi alcançada, superando a de **Dijkstra**.
+  Como resultado geral desse projeto, foi realizada com sucesso a implementação do algoritmo **BMSSP**, que apresentou uma complexidade de implementação elevada devido a pouca quantidade de materiais disponíveis sobre o assunto. Além disso, foi desenvolvido esta documentação, a qual serve como material para estudo do funcionamento e implementação do novo algoritmo de uma forma mais clara.
+
 
 # Considerações Finais
 
@@ -144,4 +153,4 @@ Com base no gráfico, percebe-se que, apesar da complexidade de O(mlog2/3n) do *
 
   Quanto aos resultados do teste, percebe-se que, apesar da corretude na classe de complexidade de tempo, ainda são necessárias otimizações bruscas para uma superioridade prática do **BMSSP** em relação a **Dijkstra**, então, enquanto inovador no papel, o potencial concreto do artigo ainda não foi alcançado.
 
-  Por isso, haverá a continuidade desse projeto, para a otimização extensiva do algoritmo, a fim de alcançar, praticamente, a quebra da barreira de **Dijkstra**. Para isso, ocorrerá a divulgação do trabalho, bem como a busca de respostas mais intrínsecas quanto ao seu funcionamento com os autores do artigo.
+  Por esse motivo, haverá a continuidade desse projeto, para a otimização extensiva do algoritmo, a fim de alcançar, praticamente, a quebra da barreira de **Dijkstra**. Para isso, ocorrerá a divulgação do trabalho, bem como a busca de respostas mais intrínsecas quanto ao seu funcionamento com os autores do artigo.
