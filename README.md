@@ -56,7 +56,13 @@
 
 ## Metodologia
 
+  Para a experimentação entre os 2 algoritmos, foram criados em tempo de execução grafos esparsos aleatórios. Todos os grafos foram criados com `n` nós e `2n` arestas de pesos não negativos aleatórios, primeiramente garantiu-se que havia um caminho para todos os nós adicionados e, depois, as arestas restantes foram adicionadas de forma aleatória, assim, a quantidade de arestas que entram e saem dos nós se mantém na mesma ordem de magnitude ao longo de todo o grafo. Essas especificações foram necessárias para promover uma entrada extensa, randômica, mas no cenário em que, segundo o artigo, o novo algoritmo melhor funciona, com grafos esparsos de graus constantes entre os nós. Com isso, foi possível analisar empiricamente os dois algoritmos exatamente nas situações propostas pelo artigo.
+
+  Dessa forma, foram criados grafos de tamanho `1.000` a `1.000.000` com intervalos de `1.000` entre eles, sendo cada um executado `20` vezes em cada algoritmo, obtendo-se a média do tempo de execução de cada um, bem como a verificação de incongruências nos resultados do **BMSSP**
+
 ## Resultados
+
+  Os dados puros podem ser vistos em [RESULTS](results.csv). Percebe-se a ausência de erros ao longo de toda a experimentação, 
 
 # Considerações Finais
 
