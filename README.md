@@ -97,8 +97,18 @@
 
 ## Resultados
 
-  Os dados puros podem ser vistos em [RESULTS](results.csv). Percebe-se a ausência de erros ao longo de toda a experimentação, 
+  Os dados puros podem ser vistos em [RESULTS](results.csv). Percebe-se a ausência de erros ao longo de toda a experimentação.
+
+  Como resultado desse projeto, foi realizada com sucesso a implementação do algoritmo BMSSP, que apresentou uma complexidade de implementação elevada devido a pouca quantidade de materiais disponíveis sobre o assunto. Além disso, foi desenvolvido esta documentação, que pode ser utilizada como material para estudo do funcionamento e implementação do novo algoritmo. Por fim, foi realizada uma comparação entre os algoritmos BMSSP e Dijkstra, a fim de analisar de forma prática a eficiência de ambos para o mesmo problema, uma vez que, apesar da classe de complexidade do novo algoritmo ser menor do que a de Dijkstra, constantes elevadas podem fazer com que o Dijkstra seja mais eficiente na prática. Sendo assim, os dois algoritmos foram submetidos a problemas de SSP em grafos direcionados com pesos não negativos. O gráfico abaixo mostra o tempo de execução dos dois algoritmos em grafos que vão de 1000 até 1 milhão de nós:
+
+  ![Gráfico comparativo Dijkstra e BMSSP](benchmarkResults.png)
+
+Com base no gráfico, percebe-se que, apesar da complexidade de O(mlog2/3n) do **BMSSP**, seu desempenho prático não superou o do algoritmo de **Dijkstra**. Isso se deve ao alto valor das constantes, pois a complexidade de algumas operações é grande, o algoritmo utiliza muita recursão, e muitos objetos precisam ser criados em tempo de execução (devido à natureza recursiva). Todos esses fatores, somados à pequena diminuição de custo - O(mlog n) para O(mlog2/3n) - fazem com que o **BMSSP** não tenha superado o desempenho de **Dijkstra** para os grafos analisados. Entretanto, apesar dessas questões, ainda que o **Dijkstra** se mostre mais eficiente, como podemos ver no gráfico, a razão (reta verde) está decrescendo, o que mostra que, assintoticamente, a complexidade de tempo menor foi alcançada, superando a de **Dijkstra**.
 
 # Considerações Finais
 
-  Portanto, conclui-se que o algoritmo BMSSP não apenas otimiza a resolução de problemas de menor caminho, mas também se apresenta como uma alternativa congruente e eficiente para futuras aplicações acadêmicas e de mercado que exijam alto desempenho no processamento de grafos.
+  Em suma, foi alcançado o objetivo de implementar e documentar de forma clara o artigo, o que melhora seu entendimento para a comunidade técnica. Assim, o conhecimento sobre o algoritmo será alavancado, permitindo maiores esforços em seu estudo e otimização.
+
+  Quanto aos resultados do teste, percebe-se que, apesar da corretude na classe de complexidade de tempo, ainda são necessárias otimizações bruscas para uma superioridade prática do **BMSSP** em relação a **Dijkstra**, então, enquanto inovador no papel, o potencial concreto do artigo ainda não foi alcançado.
+
+  Por isso, haverá a continuidade desse projeto, para a otimização extensiva do algoritmo, a fim de alcançar, praticamente, a quebra da barreira de **Dijkstra**. Para isso, ocorrerá a divulgação do trabalho, bem como a busca de respostas mais intrínsecas quanto ao seu funcionamento com os autores do artigo.
