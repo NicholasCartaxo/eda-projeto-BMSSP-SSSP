@@ -167,6 +167,6 @@
 
   Em suma, foi alcançado o objetivo de implementar e documentar de forma clara o artigo, o que melhora seu entendimento para a comunidade técnica. Assim, o conhecimento sobre o algoritmo será alavancado, permitindo maiores esforços em seu estudo e otimização.
 
-  Quanto aos resultados do teste, percebe-se que, apesar da corretude na classe de complexidade de tempo, ainda são necessárias otimizações bruscas para uma superioridade prática do **BMSSP** em relação a **Dijkstra**, então, enquanto inovador no papel, o potencial concreto do artigo ainda não foi alcançado.
+  Quanto aos resultados do teste, percebe-se que, apesar da suposta corretude na classe de complexidade de tempo da implementação, ainda são necessárias otimizações bruscas para uma superioridade prática do **BMSSP** em relação a **Dijkstra**, então, enquanto inovador no papel, o potencial concreto do artigo ainda não foi alcançado.
 
   Por esse motivo, haverá a continuidade desse projeto, para a otimização extensiva do algoritmo, a fim de alcançar, praticamente, a quebra da barreira de **Dijkstra**. Para isso, ocorrerá a divulgação do trabalho, bem como a busca de respostas mais intrínsecas quanto ao seu funcionamento com os autores do artigo.
