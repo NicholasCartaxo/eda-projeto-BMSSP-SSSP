@@ -1,172 +1,102 @@
-# EDA Projeto BMSSP para SSSP
-  Implementação, documentação e experimentação do **Bounded Multi-Source Shortest Path** (**BMSSP**) como algoritmo que resolve o problema de **Single Source Shortest Path** (**SSSP**) em comparação com **Dijkstra**.
+# Breaking the Sorting Barrier for Directed Single-Source Shortest Path
+Implementation, documentation, and experimentation of the **Bounded Multi-Source Shortest Path** (**BMSSP**) as an algorithm that solves the **Single Source Shortest Path** (**SSSP**) problem, in comparison with **Dijkstra**.
 
-  Esse repositório utiliza o artigo [Breaking the Sorting Barrier for Directed Single-Source Shortest Paths](https://arxiv.org/abs/2504.17033) como base para implementar e documentar o **BMSSP** resolvendo o problema de menor caminho para uma única fonte. Além disso, é feita uma comparação experimental com **Dijkstra**, a fim de analisar a superação da barreira de tempo para **SSSP** prometida.
+This repository uses the article [Breaking the Sorting Barrier for Directed Single-Source Shortest Paths](https://arxiv.org/abs/2504.17033) as a basis to implement and document **BMSSP**, solving the single-source shortest path problem. In addition, an experimental comparison is made with **Dijkstra** to analyze the promised time complexity improvement for **SSSP**.
 
-## Introdução
-  Algoritmos de menor caminho identificam o caminho mais curto entre pontos em um grafo. O caminho mais curto se refere à soma dos pesos das arestas (custo, tempo ou distância). Essa questão é de suma importância para diversas aplicações, e a eficiência com que o menor caminho é encontrado é crucial para o bom funcionamento de redes de fluxos,  as quais se aplicam à logística de transportes de produtos, à escolha de rotas em redes digitais e aos algoritmos de recomendação de redes sociais. O recém-lançado **BMSSP** é um algoritmo para identificar os caminho mais curtos para fonte única que quebra a barreira de tempo de **Dijkstra**, e a falta de implementações e documentações sobre ele motivaram esse estudo. Para essa análise, o grupo implementou o programa em Java, documentou seu funcionamento e realizou testes de comparação de eficiência com o algoritmo de menor caminho de **Dijkstra**. 
+## Introduction
+Shortest path algorithms identify the shortest path between points in a graph. The shortest path refers to the sum of edge weights (cost, time, or distance). This problem is extremely important for many applications, and the efficiency with which the shortest path is found is crucial for the proper functioning of flow networks, which apply to logistics, digital network routing, and social network recommendation algorithms. The newly proposed **BMSSP** algorithm identifies single-source shortest paths and breaks **Dijkstra**’s time barrier. The lack of implementations and documentation motivated this study. For this analysis, the group implemented the program in Java, documented its functionality, and conducted efficiency comparison tests with **Dijkstra**’s shortest path algorithm.
 
-## Objetivo
-  A busca pelos menores caminho de fonte única em grafos direcionados com pesos não negativos é um problema central na ciência da computação. Nesse contexto, o algoritmo de **Dijkstra** consolidou-se como o método padrão para resolver o problema de caminho mínimo a partir de uma única fonte, devido à sua eficiência. 
-  O algoritmo já tradicional de **Dijkstra** possui uma complexidade de tempo $O(m\log n)$, sendo **n** o número de nós e **m** o número de arestas, o que era considerado a barreira para esse tipo de problema. O artigo **Breaking the Sorting Barrier for Directed Single-Source Shortest Paths** introduz um novo algoritmo teórico com complexidade de tempo $O(m\log^{2/3}n)$, quebrando essa barreira. No entanto, a ausência de implementações concretas e documentadas desse algoritmo dificulta sua compreensão e análise prática, limitando o acesso ao conteúdo por parte da comunidade acadêmica e técnica.
-  Diante disso, este projeto tem como objetivo realizar a implementação do algoritmo proposto no artigo referenciado, seguindo sua lógica, suas estruturas de dados e suas estratégias de otimização de forma fidedigna. Para isso, o código será feito com Java, utilizando otimizações de implementação e da linguagem quando possível, sem alterar sua complexidade, permitindo a validação de seu funcionamento. Além disso, são realizados testes comparativos entre os algoritmos, utilizando grafos esparsos, já que a diferença de complexidade é mais proeminente com um **m** pequeno, e com graus parecidos entre os nós, já que o artigo assume essa configuração para que se satisfaça a complexidade.
+## Objective
+Finding shortest paths from a single source in directed graphs with non-negative weights is a central problem in computer science. In this context, the **Dijkstra** algorithm has become the standard method for solving the single-source shortest path problem due to its efficiency.  
+The traditional **Dijkstra** algorithm has a time complexity of $O(m \log n)$, where **n** is the number of nodes and **m** is the number of edges, which was considered the theoretical limit for this problem. The paper **Breaking the Sorting Barrier for Directed Single-Source Shortest Paths** introduces a new theoretical algorithm with time complexity $O(m\log^{2/3}n)$, breaking that barrier. However, the lack of concrete, documented implementations of this algorithm hinders its understanding and practical analysis, limiting academic and technical accessibility.  
+Therefore, this project aims to implement the algorithm proposed in the referenced paper, faithfully following its logic, data structures, and optimization strategies. The code is written in Java, using language and implementation optimizations when possible without altering its complexity, allowing functional validation. Comparative tests are performed using sparse graphs, since the difference in complexity is more prominent for small **m**, and with similar degrees between nodes, as assumed in the paper for the complexity to hold.
 
+# Theoretical Background
 
-# Fundamentação teórica 
+## General Idea of the Algorithm
+To understand the algorithm’s specifics, it is first necessary to understand the general idea, as it is unusual for a shortest-path algorithm to use divide and conquer.
 
-## Ideia geral do Algoritmo
+The general idea is to divide the problem into small parts, based on distance limits, until the part is small enough for a simple **Dijkstra** computation, while ensuring divisions are efficient enough to reduce time complexity. Unlike traditional approaches, it doesn’t perform a complete ordering of distances in a priority queue, but only a partial ordering between parts, allowing the time barrier to be broken.
 
-  Para conseguir entender as especificidades do algoritmo, primeiramente, é necessário um entendimento mais abstrato de como ele funciona, já que é incomum um algoritmo de menor caminho usar a estratégia de divisão e conquista.
+More specifically, a call to `bmssp` receives an upper bound, the current recursion level, and already resolved nodes. It finds, among those nodes, the ones that reach unresolved nodes within the specified boundary — the **pivots** — and also solves the distances of some nodes reachable from them. With these pivots, a new recursive call is made for a smaller upper bound, until the recursion level indicates it is simple enough for **Dijkstra** to handle. As nodes are completed for smaller limits, they can serve as pivots for larger ones, gradually solving the problem by selecting pivots with smaller distances using the specialized `DQueue` structure.
 
-  A ideia geral é dividir o problema em pequenas partes, com base em limites de distâncias, até que a parte seja pequena o bastante para uma simples computação de **Dijkstra**, também limitando, por construção, uma divisão boa o bastante para diminuir a comlexidade de tempo, na qual não há, como ocorre tradicionalmente, uma ordenação completa das distâncias em uma fila de prioridade, mas apenas uma ordenação entre as partes, o  que possibilita a quebra da barreira abordada pelo artigo.
+Thus, each function call returns the new completed nodes and the upper bound they reached. For this strategy to work, it must guarantee that, given distances $b < B$, all paths with distances between **b** and **B** pass through a node with distance ≤ **b**. Each recursive call solves the problem for a certain **b**, allowing the previous call to solve the **B** frontier using these results.
 
-  Mais especificadamente, uma chamada do `bmssp` recebe um limite superior, o nível atual da recursão, e os nós já resolvidos. Então, serão achados, entre esses nós, aqueles que chegam a nós não resolvidos, dentro da fronteira especificada, os chamados **pivôs**, também solucionando as distância de alguns nós alcançados por eles. Com esses pivôs, uma nova chamada será feita para resolver o problema para um limite superior menor, até que o nível da recursão indique que isso seja trivial o bastante para que **Dijkstra** seja usado para o pequeno limite. Assim, com os nós sendo completados para esses limites menores, eles podem ser usados como pivôs dos limites maiores, gradualmente resolvendo todo o problema ao pegar os pivôs com as menores distâncias, por meio da estrutura especializada `DQueue`.
-  
-  Por isso, o retorno da função contém os novos nós completados e o limite superior por eles alcançado, já que para essa estratégia funcionar, é necessário garantir que, dadas as distâncias $b<B$, todos os caminhos com distâncias entre **b** e **B** passam por um nó com distância de até **b**, então, cada chamada recursiva resolve o problema para um certo **b**, possibilitando a chamada anterior a solucionar os nós da fronteira **B** a partir desses caminhos, conquistando de forma mais otimizada o problema.
+Therefore, the first `bmssp` call has an infinite upper bound, as it aims to solve all nodes regardless of distance, and the only completed node is the origin with distance zero.
 
-  Assim, a primeira chamada do `bmssp` contem um limite superior infinito, já que almeja-se solucionar todos os nós, independente da distância, e o único nó completado é a origem, com distância nula.
+The algorithm’s relationship with priority queues is also important. During execution, **Dijkstra** maintains a frontier — the set of discovered but not fully processed vertices. Their minimum provisional distances are known, but their neighbors may not be fully explored. These frontier vertices are stored in a priority queue, from which the nearest vertex is repeatedly extracted. The frontier can contain up to **n** elements, and each extraction costs $\log n$, leading to a total cost of $n\log n$.
 
-  Além disso, é importante destacar a relação do algoritmo com a fila de prioridade (priority queue). Durante sua execução, o **Dijkstra** precisa manter a fronteira, que é o conjunto de vértices já descobertos mas que ainda não foram inteiramente processados, o que significa que sua distância mínima provisória em relação à origem é conhecida, mas o algoritmo pode ainda não ter explorado inteiramente os vértices vizinhos. Esses vértices da fronteira são armazenados em uma fila de prioridade, da qual o próximo vértice mais próximo é repetidamente extraído. A fronteira no algoritmo de **Dijkstra** pode ter até **n** elementos, sendo **n** o número de vértices. Extrair um vértice de cada vez traz um custo adicional de $\log n$ por operação, e um custo de $n\log n$ no total.
+**BMSSP** recursively reduces the frontier size, combining **Dijkstra** and **Bellman-Ford** concepts to divide the problem, using a data structure that allows grouped insertions and deletions for partial ordering. As a result, the total number of operations is reduced, improving runtime and making it faster.
 
-  O BMSSP diminui recursivamente o tamanho da fronteira considerada, misturando o algoritmo de **Dijkstra** e o algoritmo **Bellman-Ford** para dividir o problema, junto com a estrutura de dados estrategicamente desenvolvida que permite inserção e remoção em grupos, permitindo essa ordenação parcial. Como resultado, o número total de operações pode ser significativamente reduzido, levando a melhorias no tempo de execução do algoritmo e tornando-o mais rápido. 
+## Implementation
+The algorithm implementation is organized into three main methods: `bmssp()`, `baseCase()`, and `findPivots()`. Additionally, there is a `solve()` method that receives the source node and graph, initializes constants and data structures, sets all node distances to infinity (except the source node at 0), and calls `bmssp()` with initial parameters. Constants are defined as $k=\lfloor\log^{1/3}n\rfloor$, $t=\lfloor\log^{2/3}n\rfloor$, and $level=\lceil(\log n)/t\rceil$. The algorithm returns a global structure that stores the shortest distance from the source to each node.
 
-## Implementação
+### BMSSP
+The `bmssp()` method controls recursion, dividing the problem into subproblems until the base case is reached (level = 0). It takes three parameters: the recursion level, an upper bound, and a set of already known nodes. Initially, this set contains only the source node. If the level equals zero, it calls `baseCase()`. Otherwise, it calls `findPivots()` to identify pivots, initializes the **DQueue**, and executes its main loop.  
+The **DQueue** retrieves the **M** smallest elements efficiently, where $M=2^{(level-1)t}$. The main loop repeatedly:
+1. Extracts the **M** smallest completed nodes (`prevNodes`) and their `prevUpperBound`.
+2. Calls itself recursively with a smaller level, using `prevNodes` and `prevUpperBound`.
+3. Updates new completed nodes and adds them to `newCompleteNodes`.
+4. Adds all new nodes between bounds to the **DQueue** using **batchPrepend**.
+5. The loop continues until the size limit or queue exhaustion.  
+Finally, the method returns the smallest upper bound reached and the new completed nodes.
 
-  A implementação do algoritmo está organizada em três métodos principais: `bmssp()`, `baseCase()` e `findPivots`. Além desses, foi desenvolvido também o método `solve()`, responsável por receber o nó de origem e o grafo sobre o qual o algoritmo será executado, que realiza a inicialização das constantes e das estruturas de dados necessárias, define as distâncias de cada nó com valor infinito (exceto da distância nula da origem) e, em seguida, chama o método `bmssp()` com os devidos parâmetros iniciais. Quanto a essas constantes, o artigo define, para o bom funcionamento da divisão as constantes $k=\left \lfloor{\log^{1/3}n}\right \rfloor$, $t=\left \lfloor{\log^{2/3}n}\right \rfloor$ e  $level=\left \lceil{(\log n)/t}\right \rceil$. Além disso, é definido, para o retorno do algoritmo, uma estrutura global que armazena, para todos os nós, a menor distância entre a origem e ele.
+### Base Case
+When recursion level reaches zero, `baseCase()` is executed. It takes an upper bound and a pivot. It defines a `completeNodes` set and a min-priority queue initialized with the pivot. While the queue isn’t empty and fewer than $k + 1$ nodes are completed:
+1. It removes the smallest node-distance pair and skips outdated ones.
+2. Updates the upper bound when larger distances are found.
+3. Explores each edge, updating distances if a shorter path is found.  
+If the number of completed nodes ≤ **k**, the method returns them with the given bound. Otherwise, only nodes with distances below the new upper bound are returned.
 
-  ### BMSSP
-  O método `bmssp()` é responsável por controlar a recursão principal do algoritmo, dividindo o problema geral em subproblemas até que o caso base seja alcançado, ou seja, quando o nível de recursão atinge zero. Esse método recebe inicialmente três parâmetros. O primeiro é o nível de recursão (level), utilizado como condição de parada. O segundo é um valor numérico denominado limite superior (upper bound), que estabelece a região em que os três métodos irão atuar. Por exemplo, se o limite superior for igual a 5, os métodos somente modificarão os nós cuja distância em relação ao nó de referência seja menor ou igual a 5. Inicialmente, esse limite é definido como infinito, garantindo que seja sempre maior do que qualquer distância finita. O terceiro parâmetro consiste em um conjunto de nós com distâncias já conhecidas. Esse conjunto, no início da execução, contém apenas o nó de origem — isto é, o nó a partir do qual serão calculadas as distâncias para todos os demais. A primeira operação realizada pelo método consiste em verificar se o nível de recursão é igual a zero. Nesse caso, o problema já se encontra suficientemente reduzido e o método retorna a chamada para o `baseCase()`. Caso contrário, o algoritmo recorre ao método `findPivots` para identificar os pivôs da recursão atual, definidos com base nos nós já conhecidos e no limite superior vigente. Em seguida, é inicializada a **DQueue**, uma estrutura de fila projetada para recuperar, de forma otimizada, os **M** menores elementos em uma única consulta, um chamado bloco. A estrutura é instanciada com dois parâmetros: o limite superior atual e o tamanho do bloco (**block size**), definido como $M=2^{(level-1)t}$. O uso de (nível - 1) deve-se ao fato de que os blocos retirados serão utilizados na próxima chamada recursiva, a de nível menor. Após a inicialização, todos os pivôs identificados são inseridos na **DQueue**, e o limite superior do nós completados assume o valor da menor distância entre os pivôs (esse seria o **b** utilizado como base para o **B**). Em seguida, é definido um novo conjunto, denominado **newCompleteNodes**, destinado a armazenar os nós que terão suas distâncias determinadas em relação ao nó de origem durante a execução do laço principal do `bmssp()`. Também é estabelecido um limite máximo para o tamanho desse conjunto, definido como $maxSize=k2^{t}$, para garantir que uma única chamada do método não execute mais do que o definido pela divisão. A partir disso, enquanto o tamanho do conjunto não ultrapassar esse limite e a **DQueue** não estiver vazia, o laço principal do algoritmo é executado. O funcionamento desse laço pode ser descrito da seguinte forma:
+### Find Pivots
+The `findPivots()` method identifies pivot nodes to partition the problem. It receives an upper bound and a **border** node set. It iterates **k** times, expanding nodes and updating distances. If the total completed nodes exceed $k·|border|$, it returns all border nodes as pivots. Otherwise, pivots are nodes that are roots of shortest-path trees of size ≥ **k**.
 
-  1. A partir da **DQueue**, são extraídas duas informações: os **M** menores nós já completados, denominados **prevNodes**, e o **prevUpperBound**, correspondente ao limite entre os elementos que saíram e os que permanecem na fila.
+### DQueue
+The specialized **DQueue** structure is a block-based priority queue with three key operations:
+- **Insert** — inserts a (node, distance) pair if no smaller exists.  
+- **BatchPrepend** — adds a batch of smaller pairs.  
+- **Pull** — retrieves and deletes the **M** smallest pairs and the separating upper bound.  
+Internally, it uses two structures: **BatchList** (a stack of blocks) and **InsertTree** (a Red-Black tree of blocks).
 
-  2. Em seguida, são definidas duas novas variáveis, análogas às anteriores: **currentNodes** e **currentUpperBound**. Esses valores correspondem aos resultados da próxima chamada recursiva, realizada com um nível reduzido, considerando os **prevNodes** e o **prevUpperBound**. Dessa forma, o problema é diminuído progressivamente até que o nível atinja zero, momento em que o caso base é acionado com um único nó inicial. Em todos esses cenários, o retorno consiste nas variáveis **current** explicitadas.
+## Practical Example
+An example is shown with origin **1**, recursion level **3**, and constants $k=1$, $t=1$.  
+Through successive recursive calls, pivots and upper bounds evolve until all nodes are completed. The final distances returned are:
 
-  3. Os novos nós completos são então incorporados ao conjunto **newCompleteNodes**, enquanto um novo conjunto, denominado **newNodeDists**, é criado para armazenar todos os nós cuja distância esteja entre **currentUpperBound** e **prevUpperBound**. Esses valores são posteriormente adicionados de forma simultânea à **DQueue**, garantindo maior eficiência na execução do código. Em seguida, é iniciado um laço que percorre todos os nós do conjunto **currentNodes**, verificando suas arestas. Para cada novo nó analisado, verifica-se se o novo caminho encontrado até ele é menor do que o previamente armazenado, caso positivo, esse novo valor é atualizado. Além disso, se o nó satisfizer a condição de pertencimento ao conjunto **newNodeDists**, ele e sua distância são incluídos nesse conjunto, caso ele esteja entre **prevUpperBound** e **upperBound** (o limite superior passado como argumento do método), a inserção desse único par ocorre imediatamente.
+| Node | Shortest Distance |
+|-|-|
+|1|0|
+|2|13|
+|3|5|
+|4|8|
+|5|11|
+|6|15|
 
-  4. É executado um laço sobre os nós do conjunto **prevNodes**, verificando se ele, com sua distância, se encaixa no conjunto **newNodeDists**, adicionando-o se necessário.
+# Methodology
+The project has two parts: practical and experimental.
 
-  5. O conjunto **newNodeDists** é então adicionado à **DQueue** por meio da operação **batchPrepend**, o que garante maior eficiência em comparação à inserção individual de múltiplos elementos, já que é garantido que esse conjunto só contém pares menores do que os já presentes na estrutura. Com isso, conclui-se uma iteração do laço principal, o qual se repete até que a quantidade limite de nós seja alcançada ou a estrutura fique vazia.
-
-  Por fim, o menor valor entre o **upperBound** recebido como parâmetro no início do método e o **currentUpperBound** é definido para ser retornado como o limite superior que o método concluiu. Em seguida, para cada nó completo retornado pelo `findPivots()`, é verificado se sua distância é inferior a esse menor **upperBound**, caso positivo, o nó é adicionado ao conjunto **newCompleteNodes**. Dessa forma, o retorno final do método é composto pelo menor **upperBound** e pelo conjunto **newCompleteNodes**.
-
-  ### Base Case
-  Quando o nível de recursão atinge zero, é acionado o `baseCase()`. Esse método recebe como parâmetros um limite superior e um pivô, uma vez que o problema já se encontra suficientemente reduzido para conter apenas uma origem, a partir do qual serão calculadas as distâncias até os nós vizinhos. Inicialmente, o método define um conjunto de nós completos (**completeNodes**) e uma fila de prioridade mínima, ambos contendo apenas o pivô. Além disso, é estabelecido um novo limite superior, correspondente à distância do pivô. Em seguida, enquanto a fila de prioridade não estiver vazia e o número de elementos em **completeNodes** for menor que $k + 1$, o **baseCase()** executa um laço que:
-
-  1. Remove um par de nó e distância da fila de prioridade e checa se esse valor não esta desatualizado, apenas seguindo se ela estiver de acordo com a menor distância encontrada. Se não, o laço continua com esse par **currentNode** e **currentDist**.
-
-  2. Verifica se a distância até o **currentNode** é maior que o novo **upperBound**. Se essa condição for atendida, o limite superior é atualizado com o valor da distância.
-
-  3. Executa um laço sobre todos as arestas conectadas ao **currentNode**. Para cada nó, calcula-se a distância até ele como a soma do peso da aresta e a distância do **currentNode**. Caso a nova distância seja menor do que a previamente conhecida, ela é atualizada e o nó é adicionado à fila de prioridade.
-  Dessa forma, ao final da execução do laço, se o número de nós no conjunto **completeNodes** for menor ou igual a **k**, o método retorna esse conjunto juntamente com o limite superior recebido como parâmetro no início. Caso contrário, são retornados apenas os nós cuja distância seja inferior ao novo **upperBound** calculado, juntamente com esse valor atualizado do limite superior. Isso se dá pois, assim como no `bmssp()`, o `baseCase()` também se limita quanto à quantidade de nós computados.
-
-  ### Find Pivots
-  O método `findPivots()` é responsável por identificar os nós pivôs que serão utilizados para particionar o problema e reduzir o nível de recursão. Ele recebe como parâmetros um limite superior e um conjunto inicial de nós, denominado **border**. O método possui um laço principal e define três conjuntos de nós: o conjunto de todos os nós completados a serem retornados ao final do método (**completeNodes**), os nós completados na iteração anterior do laço (**prevNodes**) e os nós que estão sendo completados na iteração atual do laço (**currentNodes**). Os conjuntos **prevNodes** e **completeNodes** são inicialmente preenchidos com os nós de **border**, enquanto **currentNodes** é vazio. O algoritmo executa **k** iterações do seguinte laço:
-
-  1. O método percorre todos as arestas dos nós de **prevNodes**. Para cada nó conectado, calcula-se a  nova distância como a soma da distância do nó de **prevNodes** e o peso da aresta.
-
-  2. Se a nova distância calculada for menor do que a distância previamente conhecida para o nó, esse valor é atualizado. Além disso, caso a nova distância seja inferior ao limite superior, o nó é adicionado ao conjunto **currentNodes**.
-
-  3. Todos os nós do conjunto **currentNodes** são adicionados ao conjunto **completeNodes**, e **currentNodes** se torna **prevNodes**. Além disso, antes da próxima iteração do laço, verifica-se se o tamanho do conjunto **completeNodes** excede $k\cdot|border|$, caso isso ocorra, o método retorna todo o conjunto **border** como pivôs, juntamente com o conjunto Complete Nodes.
-
-  Após a conclusão do laço, caso o tamanho do conjunto **completeNodes** seja inferior ao limite, os pivôs são selecionados. Então, são feitas as árvores dos menores caminhos com os nós especificados, a partir de uma referência, para cada nó, do nó anterior do seu caminho. Com isso, para os nós de **border**, é verificado se ele é raiz de uma árvore de menor caminho com tamanho maior ou igual a K; caso positivo, o nó é adicionado ao conjunto de pivôs. Por fim, o método `findPivots()` retorna todos os pivôs identificados, bem como todos os nós completados durante o processo.
-
-  ### DQueue
-
-  Quanto à **DQueue**, a estrutura especializada do artigo, ela é definida como uma fila de prioridade em blocos, sendo inicializada com um tamanho de bloco $M$ e um limite superior dos valores que armazena, e existem 3 métodos utilizados pelo algoritmo:
-
-  - **Insert**: insere um par (nó,distância) na estrutura, se somente se não houver um par desse nó com uma distância menor, também deletando o par que tiver distância maior. Funciona em $O(\log(N/M))$ amortizado
-  - **BatchPrepend**: insere um conjunto de $L$ pares (nó,distância) com distâncias menores que todas já presentes na estrutura. Funciona em $O(L\log(L/M))$ amortizado.
-  - **Pull**: retorna e deleta da estrutura os $M$ nós com as menores distâncias associadas, também retorna a limite superior entre os elementos retirados e os ainda armazenados. Funciona em $O(M)$ amortizado.
-
-  Para essa implementação, existem 2 estruturas internas, a **BatchList**, e a **InsertTree**, que armazenam, respecitavamente, os elementos do `batchPrepend()` e do `insert` respectivamente.
-
-  A **BatchList** é uma pilha de blocos, onde cada bloco possui até $M$ elementos, para isso, os elementos a serem adicionados são repartidos por suas medianas até entrarem no limite definido.
-
-  A **InsertTree** é uma Árvore Preta e Vermelha (Cruz Maltina para os vascaínos do grupo) de blocos, onde cada bloco possui um limite superior, pelo qual a árvore se ordena. Ao adicionar um novo elemento, é o menor limite superior maior que ele, adicionando-o ao bloco correto. Depois, caso o bloco passe de $M$ elementos, ele é repartido pela mediana, com o novo bloco menor sendo adicionado à árvore.
-
-  Enfim, para o `pull()`, ambas as estruturas apresentam os seus respectivos $M$ menores elementos, e há uma partição dos $M$ menores entre eles, os quais são deletados da estrutura e retornados junto com o limite entre tais elementos e o restante.
-
-## Exemplo Prático
-  Para um melhor entendimento do algoritmo, será usado um pequeno grafo exemplo, sem as especificidades teóricas. Aqui, o nó de origem é o **1**, e a primeira chamada do `bmssp()` terá nível **3**, **upperBound** infinito e apenas a origem **1** como nó inicial, com $k=1$ e $t=1$, calculados a partir do número de nós $n=6$.
-
-  ![Grafo 1](images/graph_1.png)
-
-  No `findPivots()`, o **1** será escolhido como pivô, já que há $k=1$ iterações, a qual também completa os nós **3** e **5**, com as distâncias **5** e **15**.
-
-  Adicionando o pivô na **DQueue**, o método `pull()` irá retornar apenas **1**, com **upperBound** infinito, já que ela se torna vazia. Então, as próximas chamadas recursivas irão repetir o comportamento, até que o nível chegue a 0.
-
-  Com isso, haverá o `baseCase()` com origem **1**, solucionando $k=1$ nós por vez, nesse caso, apenas o 3, e retornando um $upperBound=8$, a maior distância que ele achou, mas não completou, ou seja, todos os nós de distância menor que 8 estão completos.
-
-  ![Grafo 2](images/graph_2.png)
-
-  Dessa forma, a última chamada recursiva do `bmssp()`, de nível 1, também termina, pois ela já completou **2** nós, atingindo seu limite. Agora, voltando ao nível 2, outra chamada de nível 1 será feita, completando mais **2** nós, sendo eles **4** e **5** e suas distâncias **8** e **11** respectivamente, com a mesma estratégia de chegar até o caso base. Assim, acaba a primeira chamada de nível 2, completando seu máximo de **4** nós, com $upperBound=13$, então todos os nós de distância menor que **13** estão completos.
-
-  ![Grafo 3](images/graph_3.png)
-
-  Agora, voltando a primeira chamada, de nível 3, ela ainda não está completa, havendo, então, outra chamada de nível 2, que repete o mesmo processo de antes, até os casos base, resolvendo **2** e **6** com as respectivas distâncias de **13** e **15**. Então, o nível 1 completa com esses 2 nós, voltando ao nível 2, nesse momento, todos os nós estão solucionados, então não é adicionado nenhum novo valor na **DQueue**, a qual fica vazia, completando o nível 2, com **upperBound** infinito, e o mesmo ocorre com o nível 3, terminando a primeira chamada e, assim, todo o algoritmo.
-
-  ![Grafo 4](images/graph_4.png)
-
-  Percebe-se que o retorno do algoritmo repete a primeira chamada de `bmssp()`, mas agora, há o retorno de todos os nós presentes, indicando que suas menores distâncias foram solucionadas e armazenadas como resposta do problema de **SSSP**.
-
-  Desse modo, o retorno de `solve()`, nesse caso, será o seguinte:
-
-  | Nó | Menor Distância |
-  |-|-|
-  |1|0|
-  |2|13|
-  |3|5|
-  |4|8|
-  |5|11|
-  |6|15|
-
-
-# Metodologia
-  Nesse viés, esse projeto foi ramificado em duas partes: uma prática e uma experimental.  Dentre os  objetivos principais do plano de execução do BMSSP, temos: 
-
-## Prática
-
-  A implementação propriamente dita do algoritmo, seguindo a mesma divisão do artigo em métodos, além da estrutura auxiliar especializada definida para o funcionamento.
-
-  - `DQueue()`
-  - `findPivots()`
-  - `baseCase()`
-  - `bmssp()`
-
-  Primeiramente, foram definidas as estruturas iniciais de grafos e as estruturas de dados que seriam usadas para implementar as abstrações do artigo. Depois, foi realizada a implementação das funções separadamente. Essa etapa foi dividida entre os integrantes, que se organizaram de maneira a cada um ficar com uma parte da estrutura, auxiliando na otimização do projeto. 
+## Practical
+Implementation of the algorithm according to the paper:
+- `DQueue()`
+- `findPivots()`
+- `baseCase()`
+- `bmssp()`
 
 ## Experimental
+Experimental verification comparing **BMSSP** and **Dijkstra** for correctness and runtime.
 
-  Experimentação do **BMSSP** em comparação com **Dijkstra** para verificação de corretude e para análise gráfica dos tempos de execução.
-  
-  - Comparação dos resultados dos algoritmos para comprovar a corretude do algoritmo. 
-  - Plotagem de gráficos para o tempo de execução tanto para o **BMSSP** quanto para o algoritmo de **Dijkstra** para a análise de eficiência.
+Random sparse graphs with $n$ nodes and $2n$ edges were generated, edges weighted from $1$ to $10^9$. Graphs ranged from $10^3$ to $10^6$ nodes, each tested 20 times, averaging execution time with Java’s `System.nanoTime()`.
 
-  Para a experimentação entre os 2 algoritmos, foram criados, em tempo de execução, grafos esparsos aleatórios. Todos os grafos foram criados com $n$ nós e $2n$ arestas de pesos não negativos aleatórios, entre $1$ e $10^9$, primeiramente garantiu-se que havia um caminho para todos os nós adicionados e, depois, as arestas restantes foram adicionadas de forma aleatória, assim, a quantidade de arestas que entram e saem dos nós se mantém na mesma ordem de magnitude ao longo de todo o grafo. Essas especificações foram necessárias para promover uma entrada extensa, randômica, mas no cenário em que, segundo o artigo, o novo algoritmo melhor funciona, com grafos esparsos de graus constantes entre os nós. Com isso, foi possível analisar empiricamente os dois algoritmos exatamente nas situações propostas pelo artigo.
+Hardware:
+| | |
+|-|-|
+|RAM|32GB|
+|CPU|i5-10500|
 
-  Dessa forma, foram criados grafos de tamanho $10^3$ a $10^6$ com intervalos de $10^3$ entre eles, sendo cada um executado $20$ vezes em cada algoritmo, obtendo-se a média do tempo de execução de cada um, utilizando a diferença em nanossegundos de `System.nanoTime()` de Java antes e depois da chamada de cada algortimo. Também, houve a verificação de incongruências nos resultados do **BMSSP** em relação a **Dijkstra**, contabilizando diferenças nos resultados das menores distâncias para todos os grafos analisados.
+## Results
+Raw data in [RESULTS](benchmarkResults/results.csv).  
+No discrepancies were found between **BMSSP** and **Dijkstra**, confirming correctness. However, in practice, **BMSSP** did not outperform **Dijkstra** due to high constants and recursion overhead. Still, the performance ratio shows a decreasing trend, suggesting asymptotically lower growth for **BMSSP**, potentially confirming its theoretical advantage.
 
-  Quanto a experimentação propriamente dita, ela foi feita em uma máquina com as seguintes especificações:
-  |||
-  |-|-|
-  |RAM|32GB|
-  |CPU|i5-10500|
+![Comparison Graph Dijkstra vs BMSSP](benchmarkResults/benchmarkResults.png)
 
-
-
-## Resultados
-
-  Os dados puros podem ser vistos em [RESULTS]$(benchmarkResults/results.csv). Analisando-os, percebe-se a ausência de erros nas respostas em relaçao a **Dijkstra**, indicando fortemente a corretude do algoritmo para o problema de **SSSP**. Quanto à análise de tempo de execução, com base no gráfico, percebe-se que, apesar da complexidade de $O(m\log^{2/3}n)$ do **BMSSP**, seu desempenho prático não superou o do algoritmo de **Dijkstra**. Isso se deve, provavelmente, ao alto valor das constantes, pois a complexidade de algumas operações é muito grande, o algoritmo utiliza muita recursão, e muitos objetos precisam ser criados em tempo de execução (devido à natureza recursiva). Todos esses fatores, somados à pequena diminuição de custo, de $O(m\log n)$ para $O(m\log^{2/3}n)$, fazem com que o **BMSSP** não tenha superado o desempenho de **Dijkstra** para os grafos analisados. Entretanto, apesar dessas questões, ainda que o **Dijkstra** se mostre mais eficiente, como podemos ver no gráfico, a razão (plotagem verde) apresenta um comportamento decrescente. Assim, há a forte hipótese de que, assintoticamente, a complexidade de tempo menor foi alcançada, superando a de **Dijkstra**, já que essa diminuição da razão aponta para um cresimento menor do tempo de execução de **BMSSP** em relação a **Dijkstra**.
-
-  ![Gráfico comparativo Dijkstra e BMSSP](benchmarkResults/benchmarkResults.png)
-
-  Como resultado geral desse projeto, foi realizada com sucesso a implementação do algoritmo **BMSSP**, que apresentou uma complexidade de implementação elevada devido a pouca quantidade de materiais disponíveis sobre o assunto. Além disso, foi desenvolvido esta documentação, a qual serve como material para estudo do funcionamento e implementação do novo algoritmo de uma forma mais clara.
-
-
-# Considerações Finais
-
-  Em suma, foi alcançado o objetivo de implementar e documentar de forma clara o artigo, o que melhora seu entendimento para a comunidade técnica. Assim, o conhecimento sobre o algoritmo será alavancado, permitindo maiores esforços em seu estudo e otimização.
-
-  Quanto aos resultados do teste, percebe-se que, apesar da suposta corretude na classe de complexidade de tempo da implementação, ainda são necessárias otimizações bruscas para uma superioridade prática do **BMSSP** em relação a **Dijkstra**, então, enquanto inovador no papel, o potencial concreto do artigo ainda não foi alcançado.
-
-  Por esse motivo, haverá a continuidade desse projeto, para a otimização extensiva do algoritmo, a fim de alcançar, praticamente, a quebra da barreira de **Dijkstra**. Para isso, ocorrerá a divulgação do trabalho, bem como a busca de respostas mais intrínsecas quanto ao seu funcionamento com os autores do artigo.
+# Final Considerations
+The project successfully implemented and documented the algorithm, clarifying its functioning. While **BMSSP** theoretically breaks the sorting barrier, further optimizations are needed to achieve practical superiority over **Dijkstra**. The project will continue toward that goal, including further communication with the paper’s authors.
